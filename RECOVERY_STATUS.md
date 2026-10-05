@@ -6,7 +6,7 @@ Tanggal audit awal: 2026-10-06
 
 **RECOVERY IN PROGRESS — SOURCE LAMA BELUM TERPULIHKAN**
 
-Repo baru ini sengaja dimulai dalam mode pemulihan. Jangan menambahkan fitur baru atau menganggap implementasi baru sebagai source lama sampai sumber historis berhasil dibedakan.
+Repo baru ini sengaja dimulai dalam mode pemulihan. Jangan menganggap implementasi baru sebagai source lama sampai sumber historis berhasil dibedakan.
 
 ## Repo
 
@@ -41,22 +41,30 @@ Riwayat chat juga menyebut beberapa pekerjaan lanjutan dan PR setelah baseline. 
 
 ## Klasifikasi file selama recovery
 
-Semua hasil pemulihan berikutnya wajib diberi salah satu label:
-
 - `ORIGINAL` — source/file yang benar-benar berasal dari repo lama.
 - `RECOVERED` — dipulihkan dari artifact/build/cache/bytecode atau sumber teknis lain.
 - `RECONSTRUCTED` — dibuat ulang dari perilaku, UI reference, test evidence, atau dokumentasi.
 - `NEW` — fitur/implementasi baru setelah operasi pemulihan.
 
-## Gate sebelum implementasi fitur
+## Recovery yang sudah dilakukan pada repo baru
 
-Recovery tahap 1 dianggap selesai jika minimal:
+Tahap R1 sudah dibuat sebagai **RECONSTRUCTED**, bukan ORIGINAL:
 
-1. Bukti Library dan riwayat chat sudah dipetakan.
-2. Kontrak UI lama sudah ditulis.
-3. Baseline arsitektur lama sudah dibedakan antara VERIFIED vs HISTORICAL.
-4. Daftar komponen yang hilang dan perlu direkonstruksi sudah ada.
-5. Tidak ada source lama yang keliru diberi label ORIGINAL.
+- solution `.NET 8`;
+- WPF desktop shell;
+- `DownloadAja.Core`;
+- `DownloadAja.Infrastructure`;
+- `DownloadAja.Persistence`;
+- `DownloadAja.BrowserBridge`;
+- xUnit core tests;
+- Windows GitHub Actions CI;
+- shell UI berdasarkan referensi Library tanpa dummy download rows.
+
+CI Windows run #2 berhasil:
+
+- Restore: PASS
+- Build: PASS
+- Test: PASS
 
 ## Status saat ini
 
@@ -66,10 +74,19 @@ Recovery tahap 1 dianggap selesai jika minimal:
 - [x] Commit/build historical anchors dicatat.
 - [x] Repo migrasi lama dicoba diakses; saat ini 404.
 - [x] Audit recovery tahap 1 dibuat.
+- [x] Rekonstruksi source dimulai dengan provenance `RECONSTRUCTED`.
+- [x] R1 solution skeleton dibuat.
+- [x] R1 Windows build + unit test PASS.
 - [ ] Source ZIP lama ditemukan.
 - [ ] Portable DOWNLOAD-AJA lama ditemukan di Library.
 - [ ] Git history/bundle lama ditemukan.
 - [ ] Source ORIGINAL dipulihkan.
-- [ ] Rekonstruksi source dimulai.
+- [ ] aria2 engine adapter nyata dipulihkan/direkonstruksi.
+- [ ] Persistence atomic + queue state selesai.
+- [ ] Browser integration dipulihkan/direkonstruksi.
 
-Detail: `docs/recovery/00_RECOVERY_AUDIT.md`.
+## Next ready step
+
+**R2/R3: Download domain + persistence foundation**, lalu **R4: aria2 engine adapter**.
+
+Detail audit: `docs/recovery/00_RECOVERY_AUDIT.md`.
