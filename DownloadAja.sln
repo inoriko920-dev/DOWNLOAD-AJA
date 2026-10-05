@@ -12,11 +12,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Persistence", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.BrowserBridge", "src\DownloadAja.BrowserBridge\DownloadAja.BrowserBridge.csproj", "{F855038E-A4CD-48D7-95FC-D0F3FEFF52F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Application", "src\DownloadAja.Application\DownloadAja.Application.csproj", "{51F802E8-8A2F-45BA-90DF-E94A6A51BA23}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Core.Tests", "tests\DownloadAja.Core.Tests\DownloadAja.Core.Tests.csproj", "{D1832EB3-636C-4625-8A73-5A9223397A93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Persistence.Tests", "tests\DownloadAja.Persistence.Tests\DownloadAja.Persistence.Tests.csproj", "{2A0C4B74-F5AB-44E4-A3A2-8BBCE2D80CC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Infrastructure.Tests", "tests\DownloadAja.Infrastructure.Tests\DownloadAja.Infrastructure.Tests.csproj", "{A3DCC63A-475C-47E6-9672-A820BE416E2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadAja.Application.Tests", "tests\DownloadAja.Application.Tests\DownloadAja.Application.Tests.csproj", "{FB8069D7-6169-4AB8-8907-F63DFD28495A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,10 @@ Global
 		{F855038E-A4CD-48D7-95FC-D0F3FEFF52F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F855038E-A4CD-48D7-95FC-D0F3FEFF52F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F855038E-A4CD-48D7-95FC-D0F3FEFF52F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51F802E8-8A2F-45BA-90DF-E94A6A51BA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51F802E8-8A2F-45BA-90DF-E94A6A51BA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51F802E8-8A2F-45BA-90DF-E94A6A51BA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51F802E8-8A2F-45BA-90DF-E94A6A51BA23}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1832EB3-636C-4625-8A73-5A9223397A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1832EB3-636C-4625-8A73-5A9223397A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1832EB3-636C-4625-8A73-5A9223397A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,5 +64,9 @@ Global
 		{A3DCC63A-475C-47E6-9672-A820BE416E2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3DCC63A-475C-47E6-9672-A820BE416E2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3DCC63A-475C-47E6-9672-A820BE416E2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8069D7-6169-4AB8-8907-F63DFD28495A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8069D7-6169-4AB8-8907-F63DFD28495A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8069D7-6169-4AB8-8907-F63DFD28495A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8069D7-6169-4AB8-8907-F63DFD28495A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
