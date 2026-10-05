@@ -48,19 +48,37 @@ Riwayat chat juga menyebut beberapa pekerjaan lanjutan dan PR setelah baseline. 
 
 ## Recovery yang sudah dilakukan pada repo baru
 
-Tahap R1 sudah dibuat sebagai **RECONSTRUCTED**, bukan ORIGINAL:
+Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL:
 
+### R1 — Solution skeleton
 - solution `.NET 8`;
 - WPF desktop shell;
 - `DownloadAja.Core`;
 - `DownloadAja.Infrastructure`;
 - `DownloadAja.Persistence`;
 - `DownloadAja.BrowserBridge`;
-- xUnit core tests;
 - Windows GitHub Actions CI;
 - shell UI berdasarkan referensi Library tanpa dummy download rows.
 
-CI Windows run #2 berhasil:
+### R2 — Download domain
+- DownloadItem identity + URL/destination;
+- state machine lengkap;
+- progress/speed/ETA/error/timestamp;
+- file category inference;
+- versioned snapshot schema v1;
+- restore path untuk persisted items;
+- complete transition-matrix test.
+
+### R3 — Persistence
+- atomic download-history JSON store;
+- queue-state store + persisted ordering;
+- app-settings store;
+- shared atomic JSON helper;
+- recovery dari valid `.tmp` jika primary corrupt;
+- serialization lock untuk writer ke file yang sama;
+- max connections per download divalidasi `1..20` mengikuti historical fix evidence.
+
+Windows CI checkpoint run #22:
 
 - Restore: PASS
 - Build: PASS
@@ -75,18 +93,21 @@ CI Windows run #2 berhasil:
 - [x] Repo migrasi lama dicoba diakses; saat ini 404.
 - [x] Audit recovery tahap 1 dibuat.
 - [x] Rekonstruksi source dimulai dengan provenance `RECONSTRUCTED`.
-- [x] R1 solution skeleton dibuat.
-- [x] R1 Windows build + unit test PASS.
+- [x] R1 solution skeleton selesai + CI PASS.
+- [x] R2 download domain selesai + tests PASS.
+- [x] R3 persistence foundation selesai + tests PASS.
 - [ ] Source ZIP lama ditemukan.
 - [ ] Portable DOWNLOAD-AJA lama ditemukan di Library.
 - [ ] Git history/bundle lama ditemukan.
 - [ ] Source ORIGINAL dipulihkan.
-- [ ] aria2 engine adapter nyata dipulihkan/direkonstruksi.
-- [ ] Persistence atomic + queue state selesai.
+- [ ] R4 aria2 engine adapter nyata dipulihkan/direkonstruksi.
+- [ ] R5 queue execution core selesai.
 - [ ] Browser integration dipulihkan/direkonstruksi.
 
 ## Next ready step
 
-**R2/R3: Download domain + persistence foundation**, lalu **R4: aria2 engine adapter**.
+**R4 — aria2 engine adapter.**
 
-Detail audit: `docs/recovery/00_RECOVERY_AUDIT.md`.
+Implementasi berikutnya harus membuat protocol/process boundary dan unit tests lebih dulu. Real download baru boleh dinyatakan PASS setelah binary aria2 benar-benar tersedia untuk test/integration execution.
+
+Detail: `docs/recovery/03_RECONSTRUCTION_BACKLOG.md`.
