@@ -4,7 +4,7 @@ Repository pemulihan untuk proyek **DOWNLOAD-AJA**, aplikasi download manager Wi
 
 ## Status
 
-**Recovery aktif — R1 sampai R7 sudah direkonstruksi dan terverifikasi.**
+**Recovery aktif — R1 sampai R7 terverifikasi; R8 dan R9 sudah diimplementasikan dan menunggu final Windows CI.**
 
 Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
@@ -15,24 +15,39 @@ Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
 Jangan menyebut source hasil rekonstruksi sebagai source asli.
 
-## Verified reconstructed baseline
+## Reconstructed baseline
 
 - .NET 8 + WPF shell
 - download domain + versioned persistence
 - deterministic persisted queue core
 - aria2 JSON-RPC engine adapter
-- official aria2 1.37.0 Windows x64 fetched by CI
 - real HTTPS download integration through reconstructed `Aria2DownloadEngine`
 - live WPF binding ke queue/domain/aria2 state
-- toolbar Mulai / Jeda / Hentikan / Tambah URL
-- Add URL dialog: URL, filename, destination folder, folder picker, start-queue option
-- HTTP/HTTPS validation + filename inference
-- duplicate URL/path protection + no silent overwrite of existing files
-- default download directory and aria2 split count loaded from persisted settings
-- detail selection, category filters, progress, speed, ETA, status bar
-- periodic refresh + graceful aria2 shutdown
+- Add URL dialog + HTTP/HTTPS validation + duplicate/no-overwrite protection
+- per-user single-instance desktop handoff
+- `--add-url` startup handoff
+- current-user-only Named Pipe IPC
+- acknowledgement only after desktop acceptance/persistence
+- Chrome Manifest V3 integration
+- deterministic unpacked extension ID
+- context menu + toolbar send-to-DOWNLOAD-AJA
+- optional Chrome download interception, OFF by default
+- graceful fallback: Chrome keeps its own download if DOWNLOAD-AJA/native host fails
+- `DownloadAja.NativeHost.exe`
+- HKCU native-host registration helper without Administrator for baseline
+- extension options page + native-host connection test
 
-Latest verified checkpoint: **Windows CI run #82 — PASS**, termasuk seluruh solution tests dan real aria2 HTTPS integration.
+Latest fully verified checkpoint remains **Windows CI run #82 — PASS**. R8/R9 are implemented and waiting for the latest Windows runner to verify the combined code.
+
+## Browser integration
+
+See [`browser-extension/README.md`](browser-extension/README.md).
+
+Local install helper:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/install-chrome-integration.ps1 -InstallRoot "C:\path\ke\DOWNLOAD-AJA"
+```
 
 ## Dokumen recovery
 
@@ -48,6 +63,6 @@ Latest verified checkpoint: **Windows CI run #82 — PASS**, termasuk seluruh so
 - historical fix: `31e335c`
 - historical successful portable baseline: `da2aa9c`
 
-## Next ready step
+## Next gate
 
-`R8 — Browser handoff core`: single-instance desktop handoff, `--add-url`, local protocol/IPC, reuse AddDownloadService, dan acknowledgement hanya setelah URL benar-benar diterima serta dipersist oleh desktop app.
+Setelah final CI memverifikasi R8 + R9, tahap berikutnya adalah `R10 — Scheduler / Queue UX`.
