@@ -6,34 +6,40 @@ using System.Windows.Data;
 using System.Windows.Threading;
 using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
+using DownloadAja.Application.Scheduler;
 using DownloadAja.Core.Downloads;
+using DownloadAja.Persistence.Scheduler;
 
 namespace DownloadAja.App.ViewModels;
 
 /// <summary>
 /// RECONSTRUCTED main-window presentation layer. It binds the historical IDM-like
-/// shell to the real queue coordinator and periodically refreshes aria2 state.
+/// shell to the real queue coordinator, scheduler, and periodically refreshed aria2 state.
 /// </summary>
 public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 {
     private readonly DownloadQueueCoordinator _queue;
     private readonly AddDownloadService _addDownloadService;
+    private readonly QueueSchedulerService _scheduler;
     private readonly DispatcherTimer _refreshTimer;
     private readonly Dictionary<Guid, DownloadRowViewModel> _rowsById = new();
     private DownloadRowViewModel? _selectedDownload;
     private CategoryFilterOption? _selectedCategory;
     private string _statusText = "Memuat...";
     private string _summaryText = "Unduhan aktif: 0   |   Total kecepatan: 0 B/dtk";
+    private string _schedulerStatusText = "Jadwal nonaktif";
     private bool _refreshInProgress;
     private bool _disposed;
 
     public MainWindowViewModel(
         DownloadQueueCoordinator queue,
         AddDownloadService addDownloadService,
+        QueueSchedulerService scheduler,
         string defaultDownloadDirectory)
     {
         _queue = queue ?? throw new ArgumentNullException(nameof(queue));
         _addDownloadService = addDownloadService ?? throw new ArgumentNullException(nameof(addDownloadService));
+        _scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
         DefaultDownloadDirectory = string.IsNullOrWhiteSpace(defaultDownloadDirectory)
             ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")
             : defaultDownloadDirectory;
@@ -148,6 +154,21 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public string SchedulerStatusText
+    {
+        get => _schedulerStatusText;
+        private set
+        {
+            if (_schedulerStatusText == value)
+            {
+                return;
+            }
+
+            _schedulerStatusText = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string SelectedProgressText => SelectedDownload is null
         ? "Belum ada unduhan yang dipilih."
         : $"{SelectedDownload.StatusText} — {SelectedDownload.SizeText}";
@@ -155,9 +176,21 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     public async Task InitializeAsync()
     {
         await _queue.InitializeAsync();
+        await _scheduler.InitializeAsync();
+        await RefreshSchedulerStatusAsync();
         await RefreshFromCoordinatorAsync(refreshEngine: false);
         _refreshTimer.Start();
         StatusText = "Siap";
+    }
+
+    public Task<SchedulerStateSnapshot> GetSchedulerStateAsync() => _scheduler.GetStateAsync();
+
+    public async Task ConfigureSchedulerAsync(bool enabled, TimeSpan startTime, TimeSpan stopTime)
+    {
+        await _scheduler.ConfigureAsync(enabled, startTime, stopTime);
+        await RefreshSchedulerStatusAsync();
+        await RefreshFromCoordinatorAsync(refreshEngine: false);
+        StatusText = enabled ? "Jadwal antrean diperbarui" : "Jadwal antrean dinonaktifkan";
     }
 
     public async Task<AddDownloadResult> AddDownloadAsync(AddDownloadRequest request)
@@ -180,6 +213,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
     public async Task RefreshNowAsync()
     {
+        await _scheduler.EvaluateAsync();
         await RefreshFromCoordinatorAsync(refreshEngine: true);
     }
 
@@ -192,12 +226,21 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
         try
         {
+            await _scheduler.EvaluateAsync();
             await RefreshFromCoordinatorAsync(refreshEngine: true);
         }
         catch (Exception ex)
         {
             SetCommandError(ex);
         }
+    }
+
+    private async Task RefreshSchedulerStatusAsync()
+    {
+        var state = await _scheduler.GetStateAsync();
+        SchedulerStatusText = state.Enabled
+            ? $"Jadwal aktif {FormatTime(state.StartTime)}–{FormatTime(state.StopTime)}"
+            : "Jadwal nonaktif";
     }
 
     private async Task RefreshFromCoordinatorAsync(bool refreshEngine)
@@ -264,7 +307,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
         DownloadsView.Refresh();
         var totalSpeed = snapshot.Items.Sum(static item => item.SpeedBytesPerSecond ?? 0d);
-        SummaryText = $"Unduhan aktif: {snapshot.ActiveDownloads}   |   Total kecepatan: {FormatBytesPerSecond(totalSpeed)}";
+        SummaryText = $"Unduhan aktif: {snapshot.ActiveDownloads}   |   Total kecepatan: {FormatBytesPerSecond(totalSpeed)}   |   {SchedulerStatusText}";
         StatusText = snapshot.IsRunning ? "Antrean berjalan" : "Siap";
         OnPropertyChanged(nameof(SelectedProgressText));
         RaiseCommandStates();
@@ -382,6 +425,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
         return index == 0 ? $"{value:0} {units[index]}" : $"{value:0.##} {units[index]}";
     }
+
+    private static string FormatTime(TimeSpan value) => $"{value.Hours:00}:{value.Minutes:00}";
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
