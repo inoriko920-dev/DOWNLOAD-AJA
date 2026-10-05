@@ -6,103 +6,89 @@ Tanggal audit awal: 2026-10-06
 
 **RECOVERY IN PROGRESS — SOURCE LAMA BELUM TERPULIHKAN**
 
-Repo baru ini sengaja dimulai dalam mode pemulihan. Jangan menganggap implementasi baru sebagai source lama sampai sumber historis berhasil dibedakan.
+Repo baru ini sengaja dimulai dalam mode pemulihan. Implementasi hasil rekonstruksi tetap diberi provenance `RECONSTRUCTED`, bukan `ORIGINAL`.
 
-## Repo
+## Historical anchors
 
-- Repo aktif: `inoriko920-dev/DOWNLOAD-AJA`
-- Repo migrasi lama yang tercatat: `tonitaru6-cloud/Download-Aja-`
-- Repo lama saat audit: tidak dapat diakses melalui koneksi GitHub (404)
+- repo migrasi lama: `tonitaru6-cloud/Download-Aja-` — tidak dapat diakses saat audit;
+- historical fix: `31e335c`;
+- historical successful portable baseline: `da2aa9c`;
+- target historis: IDM-like Windows download manager.
 
-## Bukti yang sudah ditemukan
+## Verified checkpoint lama
 
-### VERIFIED — Library / arsip
-- target produk **IDM-like**;
-- fix commit historis `31e335c`;
-- final portable build success historis `da2aa9c`;
-- tests/artifacts pada tahap tersebut dilaporkan PASS;
-- referensi UI `Download Aja Manager Interface.png` dan `Download-Aja_UI_Reference.png`;
-- master workflow ASTRA/SOL umum tersedia di Library.
+R1–R7 sudah pernah terverifikasi melalui Windows CI, termasuk real aria2 HTTPS integration. Checkpoint terakhir sebelum browser/scheduler wave: **Windows CI #82 PASS**.
 
-### HISTORICAL CHAT — perlu diverifikasi ulang jika source ditemukan
-Riwayat percakapan lama mencatat C# / .NET 8 / WPF, aria2 portable, Chrome MV3 + bridge lokal, segmented HTTP/HTTPS, pause/resume/stop/delete, progress/speed/ETA, queue/scheduler, browser integration, Windows build, dan portable artifact.
+## R8 — Browser handoff core
 
-## Klasifikasi file selama recovery
+Status: **IMPLEMENTED — COMBINED CI PENDING**
 
-- `ORIGINAL` — source/file yang benar-benar berasal dari repo lama.
-- `RECOVERED` — dipulihkan dari artifact/build/cache/bytecode atau sumber teknis lain.
-- `RECONSTRUCTED` — dibuat ulang dari perilaku, UI reference, test evidence, atau dokumentasi.
-- `NEW` — fitur/implementasi baru setelah operasi pemulihan.
+- per-user single-instance;
+- `--add-url` startup handoff;
+- versioned local protocol;
+- Named Pipe `CurrentUserOnly`;
+- secondary instance → primary instance;
+- acknowledgement hanya setelah desktop benar-benar menerima/persist URL;
+- activation request untuk window yang sudah berjalan;
+- regression tests untuk parser, single-instance, persistence, dan acknowledgement timing.
 
-## Recovery yang sudah dilakukan pada repo baru
+## R9 — Chrome MV3 integration
 
-Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
+Status: **IMPLEMENTED — COMBINED CI PENDING**
 
-### R1–R7 — VERIFIED
-
-Sudah terverifikasi melalui Windows CI sampai checkpoint #82:
-
-- .NET 8 + WPF shell;
-- Core / Application / Infrastructure / Persistence / BrowserBridge;
-- versioned download domain + atomic persistence;
-- real aria2 HTTP/HTTPS engine baseline;
-- deterministic queue core;
-- live WPF binding;
-- Add URL flow dengan validation, duplicate protection, no silent overwrite, queue persistence, dan start behavior.
-
-### R8 — Browser handoff core — IMPLEMENTED, FINAL CI PENDING
-
-- per-user single-instance guard;
-- secondary instance meneruskan request lalu keluar;
-- `--add-url <URL>` dan `--add-url=<URL>`;
-- versioned local handoff protocol v1;
-- per-user Named Pipe IPC;
-- `PipeOptions.CurrentUserOnly`;
-- acknowledgement hanya setelah request diproses desktop;
-- URL browser tetap memakai R7 `AddDownloadService` sehingga validation + persistence tidak dibypass;
-- activate command untuk membawa window utama ke depan;
-- tests untuk startup parser, single instance, acknowledgement timing, persistence, dan protocol rejection.
-
-### R9 — Chrome MV3 integration — IMPLEMENTED, FINAL CI PENDING
-
-- Manifest V3 extension;
-- deterministic unpacked extension ID `noobgcmaelhpcooeoflkjnkolkhcpmcl`;
+- Chrome Manifest V3 extension;
+- deterministic unpacked extension ID;
 - context menu link/media/page;
-- toolbar action untuk active tab;
-- optional Chrome download interception;
-- interception OFF secara default;
-- Chrome baru membatalkan download setelah acknowledgement DOWNLOAD-AJA sukses;
-- graceful fallback: browser download tetap berjalan jika native host/desktop gagal atau menolak URL;
+- toolbar action;
+- optional download interception, OFF secara default;
+- browser download hanya dibatalkan setelah acknowledgement sukses;
+- graceful fallback ketika native host/desktop tidak tersedia;
 - options page + connection test;
-- native messaging protocol v1;
-- 4-byte little-endian native messaging framing + max message guard;
+- native messaging framing;
 - `DownloadAja.NativeHost.exe`;
-- native host meneruskan ke primary desktop instance;
-- jika desktop belum aktif, native host dapat menjalankan sibling `Download Aja.exe` lalu retry handoff;
-- HKCU registration helper tanpa Administrator untuk baseline;
-- uninstall helper;
-- CI validation untuk manifest, JavaScript, deterministic extension ID/origin, PowerShell syntax, dan .NET native-message tests.
+- native host dapat menjalankan sibling `Download Aja.exe` lalu retry;
+- HKCU native-host registration helper tanpa Administrator untuk baseline;
+- CI validation assets untuk manifest, JavaScript, PowerShell, extension ID/origin, dan native-message tests.
 
-## Status saat ini
+## R10 — Scheduler / queue UX
 
-- [x] R0 recovery audit.
-- [x] R1 solution skeleton.
-- [x] R2 download domain.
-- [x] R3 persistence.
-- [x] R4 real aria2 HTTP/HTTPS engine baseline.
-- [x] R5 queue execution core.
-- [x] R6 WPF shell live binding.
-- [x] R7 Add URL flow.
-- [~] R8 browser handoff core — implemented, CI pending.
-- [~] R9 Chrome MV3 extension — implemented, CI pending.
-- [ ] R10 scheduler/queue UX.
-- [ ] Source ZIP lama ditemukan.
-- [ ] Portable DOWNLOAD-AJA lama ditemukan di Library.
-- [ ] Git history/bundle lama ditemukan.
-- [ ] Source ORIGINAL dipulihkan.
+Status: **IMPLEMENTED — COMBINED CI PENDING**
 
-## Next gate
+- persisted `scheduler.json` dengan schema version 1;
+- scheduler OFF secara default;
+- konfigurasi jadwal harian start/stop berbasis jam lokal;
+- dukungan jadwal normal, misalnya `08:00–22:00`;
+- dukungan window melewati tengah malam, misalnya `22:00–06:00`;
+- scheduler menerapkan state lagi setelah aplikasi restart;
+- saat masuk active window, antrean otomatis dijalankan;
+- saat keluar active window, penjadwalan item baru dihentikan tanpa memutus paksa download yang sedang aktif;
+- dialog WPF `Jadwal Antrean` dengan validasi `HH:mm`;
+- menu dan toolbar `Jadwal` sekarang aktif;
+- status jadwal ditampilkan di UI;
+- application tests untuk same-day/overnight windows, start/stop behavior, disabled behavior, dan restart recovery;
+- persistence tests untuk scheduler JSON default + round-trip.
 
-R10 belum dikunci sebagai DONE sampai satu Windows CI terbaru memverifikasi gabungan R8 + R9. Setelah itu tahap berikutnya adalah **R10 — scheduler / queue UX**.
+## Status milestone
 
-Detail: `docs/recovery/03_RECONSTRUCTION_BACKLOG.md`.
+- [x] R0 recovery audit
+- [x] R1 solution skeleton
+- [x] R2 download domain
+- [x] R3 persistence
+- [x] R4 aria2 engine baseline
+- [x] R5 queue execution core
+- [x] R6 WPF live binding
+- [x] R7 Add URL flow
+- [~] R8 browser handoff — implemented, combined CI pending
+- [~] R9 Chrome MV3 — implemented, combined CI pending
+- [~] R10 scheduler/queue UX — implemented, combined CI pending
+- [ ] R11 IDM-parity recovery wave
+- [ ] R12 portable/release acceptance
+- [ ] source ORIGINAL lama ditemukan
+
+## Current verification gate
+
+Latest combined Windows CI for the current tree is **run #136**. Saat dokumen ini diperbarui, job masih menunggu runner. Jangan menandai R8–R10 sebagai VERIFIED sampai run terbaru benar-benar PASS.
+
+## Next step after green CI
+
+Masuk **R11 — IDM-parity recovery wave** dengan prioritas fitur recovery historis: search/filter, speed limiter, connection settings, refresh expired URL, retry/integrity, batch/all-links, import/export, ZIP preview, offline-site storage, dan improved media/browser detection.
