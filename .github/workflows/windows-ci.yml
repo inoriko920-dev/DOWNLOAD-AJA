@@ -28,4 +28,4 @@ jobs:
         run: dotnet build DownloadAja.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test tests/DownloadAja.Core.Tests/DownloadAja.Core.Tests.csproj --configuration Release --no-build --verbosity normal
+        run: dotnet test DownloadAja.sln --configuration Release --no-build --verbosity normal
