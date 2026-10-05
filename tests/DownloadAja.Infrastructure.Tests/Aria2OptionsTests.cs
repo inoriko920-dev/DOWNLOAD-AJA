@@ -18,6 +18,18 @@ public sealed class Aria2OptionsTests
         Assert.Equal(16, options.MaxConnectionsPerServer);
     }
 
+    [Fact]
+    public void Runtime_transfer_settings_update_future_split_and_speed_limit()
+    {
+        var options = new Aria2Options("aria2c.exe", 6800, "secret", 8).Validated();
+
+        options.UpdateTransferSettings(12, 4 * 1024 * 1024);
+
+        Assert.Equal(12, options.SplitCount);
+        Assert.Equal(12, options.MaxConnectionsPerServer);
+        Assert.Equal(4 * 1024 * 1024, options.GlobalDownloadLimitBytesPerSecond);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(21)]
@@ -26,5 +38,13 @@ public sealed class Aria2OptionsTests
         var options = new Aria2Options("aria2c.exe", 6800, "secret", splitCount);
 
         Assert.Throws<ArgumentOutOfRangeException>(options.Validated);
+    }
+
+    [Fact]
+    public void Runtime_transfer_settings_reject_negative_speed_limit()
+    {
+        var options = new Aria2Options("aria2c.exe", 6800, "secret", 8).Validated();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => options.UpdateTransferSettings(8, -1));
     }
 }
