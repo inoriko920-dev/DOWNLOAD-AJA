@@ -121,6 +121,7 @@ public sealed class Aria2ProcessManager : IAria2Runtime, IAsyncDisposable
         startInfo.ArgumentList.Add($"--rpc-secret={_options.RpcSecret}");
         startInfo.ArgumentList.Add("--rpc-allow-origin-all=false");
         startInfo.ArgumentList.Add("--continue=true");
+        startInfo.ArgumentList.Add($"--max-overall-download-limit={_options.GlobalDownloadLimitBytesPerSecond}");
         startInfo.ArgumentList.Add("--summary-interval=0");
         startInfo.ArgumentList.Add("--console-log-level=warn");
 
