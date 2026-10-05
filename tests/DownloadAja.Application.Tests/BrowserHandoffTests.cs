@@ -65,8 +65,10 @@ public sealed class BrowserHandoffTests
             NativeMessagingFraming.MaxMessageBytes + 1);
         using var stream = new MemoryStream(header);
 
-        await Assert.ThrowsAsync<InvalidDataException>(
-            async () => await NativeMessagingFraming.ReadAsync<NativeHostRequest>(stream));
+        await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await NativeMessagingFraming.ReadAsync<NativeHostRequest>(stream);
+        });
     }
 
     [Fact]
