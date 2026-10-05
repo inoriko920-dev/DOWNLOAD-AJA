@@ -14,7 +14,8 @@ namespace DownloadAja.App.ViewModels;
 
 /// <summary>
 /// RECONSTRUCTED main-window presentation layer. It binds the historical IDM-like
-/// shell to the real queue coordinator, scheduler, and periodically refreshed aria2 state.
+/// shell to the real queue coordinator, scheduler, search/filtering, and periodically
+/// refreshed aria2 state.
 /// </summary>
 public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 {
@@ -25,6 +26,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     private readonly Dictionary<Guid, DownloadRowViewModel> _rowsById = new();
     private DownloadRowViewModel? _selectedDownload;
     private CategoryFilterOption? _selectedCategory;
+    private string _searchText = string.Empty;
     private string _statusText = "Memuat...";
     private string _summaryText = "Unduhan aktif: 0   |   Total kecepatan: 0 B/dtk";
     private string _schedulerStatusText = "Jadwal nonaktif";
@@ -124,6 +126,23 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            var normalized = value ?? string.Empty;
+            if (string.Equals(_searchText, normalized, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _searchText = normalized;
+            OnPropertyChanged();
+            DownloadsView.Refresh();
+        }
+    }
+
     public string StatusText
     {
         get => _statusText;
@@ -201,6 +220,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         if (_rowsById.TryGetValue(result.Item.Id, out var row))
         {
             SelectedCategory = Categories[0];
+            SearchText = string.Empty;
             SelectedDownload = row;
         }
 
@@ -320,7 +340,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             return false;
         }
 
-        return SelectedCategory?.Key switch
+        var categoryMatch = SelectedCategory?.Key switch
         {
             null or "all" => true,
             "completed" => row.Item.State == DownloadState.Completed,
@@ -333,6 +353,8 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             "program" => row.Item.Category == DownloadCategory.Program,
             _ => true
         };
+
+        return categoryMatch && DownloadSearchMatcher.Matches(row.Item, SearchText);
     }
 
     private bool CanStart() => SelectedDownload is null || SelectedDownload.Item.State is DownloadState.Waiting or DownloadState.Paused or DownloadState.Stopped or DownloadState.Failed;
