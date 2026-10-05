@@ -39,8 +39,13 @@ public static class NativeMessagingFraming
         var payload = new byte[length];
         await input.ReadExactlyAsync(payload, cancellationToken).ConfigureAwait(false);
 
-        return JsonSerializer.Deserialize<T>(payload, NativeMessagingJson.Options)
-            ?? throw new InvalidDataException("Payload native message tidak valid.");
+        var message = JsonSerializer.Deserialize<T>(payload, NativeMessagingJson.Options);
+        if (message is null)
+        {
+            throw new InvalidDataException("Payload native message tidak valid.");
+        }
+
+        return message;
     }
 
     public static async Task WriteAsync<T>(
