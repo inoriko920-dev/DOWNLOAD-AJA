@@ -102,6 +102,7 @@ public sealed class Aria2DownloadEngineTests
         public string? PausedGid { get; private set; }
         public string? ResumedGid { get; private set; }
         public string? RemovedGid { get; private set; }
+        public long? GlobalLimit { get; private set; }
         public Aria2Status Status { get; set; } = new("gid-1", "active", 0, null, 0, null);
 
         public Task<bool> IsHealthyAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
@@ -131,6 +132,12 @@ public sealed class Aria2DownloadEngineTests
         }
 
         public Task<Aria2Status> TellStatusAsync(string gid, CancellationToken cancellationToken = default) => Task.FromResult(Status);
+
+        public Task ChangeGlobalDownloadLimitAsync(long bytesPerSecond, CancellationToken cancellationToken = default)
+        {
+            GlobalLimit = bytesPerSecond;
+            return Task.CompletedTask;
+        }
 
         public Task ShutdownAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
