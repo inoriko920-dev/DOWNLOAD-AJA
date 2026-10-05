@@ -3,11 +3,14 @@ namespace DownloadAja.Persistence.Settings;
 /// <summary>
 /// RECONSTRUCTED versioned settings contract. The max-connections upper bound of
 /// 20 is preserved from the historical DOWNLOAD-AJA bugfix evidence.
+/// GlobalDownloadLimitBytesPerSecond uses 0 to mean unlimited. The optional
+/// constructor value keeps existing schema-v1 JSON backward compatible.
 /// </summary>
 public sealed record AppSettingsSnapshot(
     int SchemaVersion,
     string DefaultDownloadDirectory,
-    int MaxConnectionsPerDownload)
+    int MaxConnectionsPerDownload,
+    long GlobalDownloadLimitBytesPerSecond = 0)
 {
     public const int CurrentSchemaVersion = 1;
     public const int DefaultConnectionsPerDownload = 8;
@@ -23,7 +26,8 @@ public sealed record AppSettingsSnapshot(
         return new AppSettingsSnapshot(
             CurrentSchemaVersion,
             downloads,
-            DefaultConnectionsPerDownload);
+            DefaultConnectionsPerDownload,
+            GlobalDownloadLimitBytesPerSecond: 0);
     }
 
     public void Validate()
@@ -41,6 +45,11 @@ public sealed record AppSettingsSnapshot(
         if (MaxConnectionsPerDownload is < 1 or > MaximumConnectionsPerDownload)
         {
             throw new InvalidDataException($"Max connections per download must be between 1 and {MaximumConnectionsPerDownload}.");
+        }
+
+        if (GlobalDownloadLimitBytesPerSecond < 0)
+        {
+            throw new InvalidDataException("Global download speed limit cannot be negative.");
         }
     }
 }
