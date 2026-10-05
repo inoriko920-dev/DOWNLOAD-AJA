@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **R1 COMPLETE / R2 READY**
+Status: **R1–R3 COMPLETE / R4 READY**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -26,78 +26,93 @@ Selesai dibuat sebagai `RECONSTRUCTED`:
 - [x] infrastructure/engine adapter project.
 - [x] persistence project.
 - [x] browser bridge contract project.
-- [x] xUnit test project.
+- [x] xUnit test projects.
 - [x] shell UI mengikuti struktur referensi Library.
 - [x] Windows CI workflow.
 - [x] Restore PASS.
 - [x] Build PASS.
 - [x] Unit test PASS.
 
-Catatan: run CI pertama gagal hanya karena `using Xunit;` belum ditambahkan pada test source. Defect tersebut diperbaiki dan run #2 PASS seluruh tahap.
-
 ## R2 — Download domain
 
-Status: READY / PARTIAL FOUNDATION EXISTS
+Status: DONE
 
-Sudah ada:
+Selesai sebagai `RECONSTRUCTED`:
 
 - [x] DownloadItem identity.
 - [x] URL + destination.
-- [x] download state machine dasar.
+- [x] state machine Waiting / Downloading / Paused / Completed / Stopped / Failed.
 - [x] progress bytes/percent.
 - [x] speed/ETA representation.
 - [x] timestamps.
-- [x] error model dasar.
-
-Belum:
-
-- [ ] category/type inference minimal.
-- [ ] serialization contract versioned.
-- [ ] seluruh transition matrix/regression cases.
-- [ ] immutable restore constructor/DTO untuk persistence.
-
-Acceptance:
-
-- unit tests untuk setiap state transition;
-- invalid transition ditolak;
-- serialization contract versioned.
+- [x] error model.
+- [x] category/type inference untuk Video, Audio, Document, Archive, Program, Other.
+- [x] immutable restore path untuk persistence.
+- [x] versioned `DownloadItemSnapshot` schema v1.
+- [x] complete transition-matrix regression test.
+- [x] invalid transitions rejected.
+- [x] snapshot round-trip tests.
 
 ## R3 — Persistence
+
+Status: DONE
+
+Selesai sebagai `RECONSTRUCTED`:
+
+- [x] atomic download history store.
+- [x] versioned queue-state store.
+- [x] persisted queue ordering.
+- [x] persisted max simultaneous downloads + running flag.
+- [x] versioned application-settings store.
+- [x] default download-directory setting.
+- [x] max connections per download setting.
+- [x] historical aria2 max-connections clamp `1..20`.
+- [x] same-directory temp write + atomic replacement.
+- [x] corrupt-primary recovery from valid temp state.
+- [x] in-process serialization for concurrent writers to the same file.
+- [x] tests for history, queue order, settings, corruption recovery, and concurrent writers.
+
+Windows CI run #22 for the R2/R3 checkpoint:
+
+- Restore: PASS
+- Build: PASS
+- Test: PASS
+
+Regression targets covered:
+
+- historical save race: guarded by serialized writers + atomic replacement;
+- persisted queue order: explicit versioned queue-state contract;
+- historical aria2 max 20: settings validation prevents values >20.
+
+## R4 — aria2 engine adapter
 
 Status: READY
 
 Target:
 
-- history store;
-- queue order store;
-- settings store;
-- atomic save;
-- recovery dari corrupt/incomplete temp write.
-
-Regression target dari riwayat lama:
-
-- save race;
-- queue order setelah restart.
-
-## R4 — aria2 engine adapter
-
-Target:
-
 - process lifecycle;
-- RPC health;
+- locate/bundle aria2 executable without assuming it is globally installed;
+- private RPC endpoint/token;
+- RPC health check;
 - add URI;
 - pause/resume/remove;
 - status polling;
-- max connection clamp;
+- map aria2 GID to DownloadItem id;
+- max connection clamp 1..20;
 - graceful shutdown;
-- orphan-process recovery.
+- stale/orphan process handling;
+- clear engine diagnostics.
 
 Acceptance:
 
-- real HTTP/HTTPS download integration test;
-- partial download resume test;
-- connection limit test;
-- no UI dependency in engine layer.
+- unit tests for RPC payload/result mapping;
+- connection clamp test;
+- process lifecycle test where feasible;
+- real HTTP/HTTPS download integration test once an aria2 binary is supplied/bundled;
+- partial-download resume test once binary is available;
+- no WPF dependency in engine layer.
+
+Important: do not claim real aria2 download PASS until the binary is actually available to CI/test execution.
 
 ## R5 — Queue core
 
