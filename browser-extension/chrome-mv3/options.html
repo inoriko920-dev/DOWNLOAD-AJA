@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DOWNLOAD-AJA Integration</title>
+  <style>
+    body { font: 14px system-ui, sans-serif; margin: 32px; max-width: 720px; color: #202124; }
+    h1 { font-size: 22px; margin-bottom: 8px; }
+    .muted { color: #5f6368; }
+    .row { margin: 18px 0; }
+    label { display: flex; gap: 10px; align-items: flex-start; }
+    button { padding: 8px 14px; margin-right: 8px; }
+    #status { margin-top: 14px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>DOWNLOAD-AJA Integration</h1>
+  <p class="muted">Integrasi Chrome MV3 → native host → aplikasi desktop DOWNLOAD-AJA.</p>
+
+  <div class="row">
+    <label>
+      <input id="startQueue" type="checkbox">
+      <span>Mulai antrean otomatis setelah URL diterima DOWNLOAD-AJA.</span>
+    </label>
+  </div>
+
+  <div class="row">
+    <label>
+      <input id="captureDownloads" type="checkbox">
+      <span>
+        Tangkap unduhan Chrome secara otomatis. Fitur ini <strong>mati secara default</strong>.
+        Chrome baru membatalkan unduhan lokal setelah DOWNLOAD-AJA memberi acknowledgement sukses.
+      </span>
+    </label>
+  </div>
+
+  <div class="row">
+    <button id="save" type="button">Simpan</button>
+    <button id="test" type="button">Tes Koneksi</button>
+    <div id="status" class="muted" aria-live="polite"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
