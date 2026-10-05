@@ -1,0 +1,63 @@
+<Window x:Class="DownloadAja.App.OptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pilihan DOWNLOAD-AJA"
+        Width="560"
+        Height="410"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
+                   Text="Pengaturan Unduhan"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,16" />
+
+        <TextBlock Grid.Row="1" Text="Folder unduhan default" VerticalAlignment="Center" Margin="0,4" />
+        <TextBox x:Name="FolderBox" Grid.Row="1" Grid.Column="1" Margin="0,4,8,4" />
+        <Button Grid.Row="1" Grid.Column="2" Width="76" Margin="0,4" Content="Pilih..." Click="BrowseButton_OnClick" />
+
+        <TextBlock Grid.Row="2" Text="Koneksi per unduhan" VerticalAlignment="Center" Margin="0,8,0,4" />
+        <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,8,0,4">
+            <TextBox x:Name="ConnectionsBox" Width="80" />
+            <TextBlock Text="  (1–20; aria2 per-server tetap maksimum 16)" VerticalAlignment="Center" Foreground="Gray" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="3" Text="Unduhan bersamaan" VerticalAlignment="Center" Margin="0,8,0,4" />
+        <StackPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,8,0,4">
+            <TextBox x:Name="SimultaneousBox" Width="80" />
+            <TextBlock Text="  (1–20)" VerticalAlignment="Center" Foreground="Gray" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="4" Text="Batas total kecepatan" VerticalAlignment="Center" Margin="0,8,0,4" />
+        <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,8,0,4">
+            <TextBox x:Name="SpeedLimitBox" Width="110" />
+            <TextBlock Text="  KB/dtk   (0 = tanpa batas)" VerticalAlignment="Center" Foreground="Gray" />
+        </StackPanel>
+
+        <Border Grid.Row="5" Grid.ColumnSpan="3" Margin="0,16,0,12" Padding="10" Background="#FFF6F6F6" BorderBrush="#FFD7D7D7" BorderThickness="1">
+            <TextBlock TextWrapping="Wrap"
+                       Text="Perubahan koneksi berlaku untuk unduhan baru. Batas kecepatan diterapkan langsung jika aria2 sedang aktif; jika belum aktif, nilai akan dipakai saat engine pertama kali dijalankan." />
+        </Border>
+
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Width="90" Margin="0,0,8,0" Content="Batal" IsCancel="True" />
+            <Button Width="90" Content="Simpan" IsDefault="True" Click="SaveButton_OnClick" />
+        </StackPanel>
+    </Grid>
+</Window>
