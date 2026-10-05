@@ -23,7 +23,14 @@
                 <Separator />
                 <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
             </MenuItem>
-            <MenuItem Header="Unduh" />
+            <MenuItem Header="Unduh">
+                <MenuItem Header="Tambah URL..." Click="AddUrlButton_OnClick" />
+                <Separator />
+                <MenuItem Header="Mulai / Lanjutkan" Command="{Binding StartCommand}" />
+                <MenuItem Header="Jeda" Command="{Binding PauseCommand}" />
+                <MenuItem Header="Hentikan" Command="{Binding StopCommand}" />
+                <MenuItem Header="Mulai Ulang" Command="{Binding RestartCommand}" />
+            </MenuItem>
             <MenuItem Header="Lihat" />
             <MenuItem Header="Jadwal" IsEnabled="False" ToolTip="Dikerjakan pada tahap scheduler." />
             <MenuItem Header="Kategori" />
@@ -34,7 +41,7 @@
         <Border Grid.Row="1" BorderBrush="#FFD1D1D1" BorderThickness="0,1,0,1" Background="#FFF8F8F8">
             <ToolBarTray Background="Transparent">
                 <ToolBar Band="0" BandIndex="0" Background="Transparent" Padding="8,4">
-                    <Button Width="82" Height="58" Margin="2" Content="Tambah URL" IsEnabled="False" ToolTip="Tahap R7 — Add URL flow." />
+                    <Button Width="82" Height="58" Margin="2" Content="Tambah URL" Click="AddUrlButton_OnClick" ToolTip="Tambahkan URL HTTP/HTTPS ke antrean." />
                     <Separator />
                     <Button Width="70" Height="58" Margin="2" Content="Mulai" Command="{Binding StartCommand}" />
                     <Button Width="70" Height="58" Margin="2" Content="Jeda" Command="{Binding PauseCommand}" />
