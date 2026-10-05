@@ -6,7 +6,7 @@ namespace DownloadAja.BrowserBridge;
 /// <summary>
 /// RECONSTRUCTED v1 contract for local browser/secondary-instance handoff.
 /// The protocol is deliberately tiny and versioned so the Chrome extension can
-/// be added later without coupling transport code to WPF.
+/// stay decoupled from WPF and from the native messaging transport.
 /// </summary>
 public static class BrowserHandoffProtocol
 {
@@ -95,4 +95,48 @@ public static class StartupCommandParser
 
         throw new FormatException("Argumen startup tidak dikenali. Gunakan --add-url <URL>.");
     }
+}
+
+/// <summary>
+/// Protocol spoken between the Chrome MV3 extension and DownloadAja.NativeHost.
+/// It is separate from BrowserHandoffProtocol because Chrome native messaging
+/// needs a small host-level handshake in addition to desktop commands.
+/// </summary>
+public static class NativeMessagingProtocol
+{
+    public const int CurrentVersion = 1;
+    public const string HostName = "com.downloadaja.native_host";
+    public const string PingCommand = "ping";
+    public const string AddUrlCommand = BrowserHandoffProtocol.AddUrlCommand;
+
+    public static NativeHostRequest CreatePing() =>
+        new(CurrentVersion, PingCommand, null, false);
+
+    public static NativeHostRequest CreateAddUrl(string url, bool startQueueAfterAdd = true) =>
+        new(CurrentVersion, AddUrlCommand, url, startQueueAfterAdd);
+}
+
+public sealed record NativeHostRequest(
+    int Version,
+    string Command,
+    string? Url,
+    bool StartQueueAfterAdd);
+
+public sealed record NativeHostResponse(
+    int Version,
+    bool Accepted,
+    string Message,
+    Guid? DownloadId,
+    bool DesktopReachable)
+{
+    public static NativeHostResponse Accept(
+        string message,
+        bool desktopReachable,
+        Guid? downloadId = null) =>
+        new(NativeMessagingProtocol.CurrentVersion, true, message, downloadId, desktopReachable);
+
+    public static NativeHostResponse Reject(
+        string message,
+        bool desktopReachable = false) =>
+        new(NativeMessagingProtocol.CurrentVersion, false, message, null, desktopReachable);
 }
