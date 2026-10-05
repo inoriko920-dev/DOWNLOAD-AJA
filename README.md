@@ -4,7 +4,7 @@ Repository pemulihan untuk proyek **DOWNLOAD-AJA**, aplikasi download manager Wi
 
 ## Status
 
-**Recovery aktif — R1 sampai R5 sudah direkonstruksi dan terverifikasi.**
+**Recovery aktif — R1 sampai R6 sudah direkonstruksi dan terverifikasi.**
 
 Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
@@ -22,10 +22,13 @@ Jangan menyebut source hasil rekonstruksi sebagai source asli.
 - deterministic persisted queue core
 - aria2 JSON-RPC engine adapter
 - official aria2 1.37.0 Windows x64 fetched by CI
-- **real HTTPS download integration PASS** through reconstructed `Aria2DownloadEngine`
-- queue regression tests for limit counting, stop-all, persisted ordering, pause/resume, and restart behavior
+- real HTTPS download integration through reconstructed `Aria2DownloadEngine`
+- live WPF binding ke queue/domain/aria2 state
+- toolbar Mulai / Jeda / Hentikan
+- detail selection, category filters, progress, speed, ETA, status bar
+- periodic refresh + graceful aria2 shutdown
 
-Latest verified checkpoint: **Windows CI run #52 — PASS**, including real aria2 HTTPS integration.
+Latest verified checkpoint: **Windows CI run #65 — PASS**, termasuk seluruh solution tests dan real aria2 HTTPS integration.
 
 ## Dokumen recovery
 
@@ -43,4 +46,4 @@ Latest verified checkpoint: **Windows CI run #52 — PASS**, including real aria
 
 ## Next ready step
 
-`R6 — WPF shell parity + live binding`: hubungkan UI referensi ke queue/domain/aria2 nyata, selection detail, toolbar commands, category filter, progress, speed/ETA, dan status bar.
+`R7 — Add URL flow`: aktifkan tombol Tambah URL dan sambungkan dialog URL/folder/filename/validation/duplicate handling ke queue + aria2 nyata.
