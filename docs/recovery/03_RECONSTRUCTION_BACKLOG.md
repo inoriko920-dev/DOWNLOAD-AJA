@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **READY AFTER RECOVERY AUDIT**
+Status: **R1 COMPLETE / R2 READY**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -14,44 +14,47 @@ Status: DONE
 - [x] Lock UI reference contract.
 - [x] Buat historical architecture map.
 
-Gate: dokumentasi recovery tersedia sebelum source baru ditulis.
-
 ## R1 — Solution skeleton
 
-Status: READY
+Status: DONE
 
-Target:
+Selesai dibuat sebagai `RECONSTRUCTED`:
 
-- .NET 8 solution;
-- WPF desktop project;
-- domain/core project;
-- infrastructure/engine adapter project;
-- persistence project;
-- browser bridge contract project;
-- test projects;
-- clear provenance notes.
+- [x] .NET 8 solution.
+- [x] WPF desktop project.
+- [x] domain/core project.
+- [x] infrastructure/engine adapter project.
+- [x] persistence project.
+- [x] browser bridge contract project.
+- [x] xUnit test project.
+- [x] shell UI mengikuti struktur referensi Library.
+- [x] Windows CI workflow.
+- [x] Restore PASS.
+- [x] Build PASS.
+- [x] Unit test PASS.
 
-Belum boleh memasukkan fitur parity besar.
-
-Acceptance:
-
-- build bersih di Windows CI;
-- app membuka shell kosong yang mengikuti layout reference;
-- tests dapat dijalankan;
-- tidak ada mock download yang diklaim sebagai implementasi final.
+Catatan: run CI pertama gagal hanya karena `using Xunit;` belum ditambahkan pada test source. Defect tersebut diperbaiki dan run #2 PASS seluruh tahap.
 
 ## R2 — Download domain
 
-Target:
+Status: READY / PARTIAL FOUNDATION EXISTS
 
-- DownloadItem identity;
-- URL + destination;
-- download state machine;
-- progress bytes/percent;
-- speed/ETA representation;
-- timestamps;
-- error model;
-- category/type inference minimal.
+Sudah ada:
+
+- [x] DownloadItem identity.
+- [x] URL + destination.
+- [x] download state machine dasar.
+- [x] progress bytes/percent.
+- [x] speed/ETA representation.
+- [x] timestamps.
+- [x] error model dasar.
+
+Belum:
+
+- [ ] category/type inference minimal.
+- [ ] serialization contract versioned.
+- [ ] seluruh transition matrix/regression cases.
+- [ ] immutable restore constructor/DTO untuk persistence.
 
 Acceptance:
 
@@ -60,6 +63,8 @@ Acceptance:
 - serialization contract versioned.
 
 ## R3 — Persistence
+
+Status: READY
 
 Target:
 
@@ -113,20 +118,24 @@ Regression target:
 
 ## R6 — WPF shell parity
 
-Target langsung dari UI reference:
+Status: PARTIAL FOUNDATION EXISTS
 
-- menu bar;
-- toolbar;
-- category sidebar;
-- seven-column download table;
-- detail/progress/log tabs;
-- status bar;
-- selection/detail binding;
-- real state binding.
+Sudah ada struktur visual:
 
-Gate:
+- [x] menu bar;
+- [x] toolbar;
+- [x] category sidebar;
+- [x] seven-column download table;
+- [x] detail/progress/log tabs;
+- [x] status bar.
 
-UI tidak boleh menggunakan dummy data untuk acceptance akhir R6.
+Belum:
+
+- [ ] selection/detail binding;
+- [ ] real state binding;
+- [ ] toolbar commands;
+- [ ] category filters;
+- [ ] progress presentation nyata.
 
 ## R7 — Add URL flow
 
