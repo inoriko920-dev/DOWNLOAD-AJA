@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Threading;
+using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
 using DownloadAja.Core.Downloads;
 
@@ -15,6 +16,7 @@ namespace DownloadAja.App.ViewModels;
 public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 {
     private readonly DownloadQueueCoordinator _queue;
+    private readonly AddDownloadService _addDownloadService;
     private readonly DispatcherTimer _refreshTimer;
     private readonly Dictionary<Guid, DownloadRowViewModel> _rowsById = new();
     private DownloadRowViewModel? _selectedDownload;
@@ -24,9 +26,16 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     private bool _refreshInProgress;
     private bool _disposed;
 
-    public MainWindowViewModel(DownloadQueueCoordinator queue)
+    public MainWindowViewModel(
+        DownloadQueueCoordinator queue,
+        AddDownloadService addDownloadService,
+        string defaultDownloadDirectory)
     {
         _queue = queue ?? throw new ArgumentNullException(nameof(queue));
+        _addDownloadService = addDownloadService ?? throw new ArgumentNullException(nameof(addDownloadService));
+        DefaultDownloadDirectory = string.IsNullOrWhiteSpace(defaultDownloadDirectory)
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")
+            : defaultDownloadDirectory;
 
         Categories = new ObservableCollection<CategoryFilterOption>
         {
@@ -66,6 +75,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     public ObservableCollection<DownloadRowViewModel> Downloads { get; }
     public ICollectionView DownloadsView { get; }
     public ObservableCollection<CategoryFilterOption> Categories { get; }
+    public string DefaultDownloadDirectory { get; }
 
     public AsyncRelayCommand StartCommand { get; }
     public AsyncRelayCommand PauseCommand { get; }
@@ -147,6 +157,24 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         await RefreshFromCoordinatorAsync(refreshEngine: false);
         _refreshTimer.Start();
         StatusText = "Siap";
+    }
+
+    public async Task<AddDownloadResult> AddDownloadAsync(AddDownloadRequest request)
+    {
+        var result = await _addDownloadService.AddAsync(request);
+        await RefreshFromCoordinatorAsync(refreshEngine: false);
+
+        if (_rowsById.TryGetValue(result.Item.Id, out var row))
+        {
+            SelectedCategory = Categories[0];
+            SelectedDownload = row;
+        }
+
+        StatusText = result.Item.State == DownloadState.Downloading
+            ? $"Mengunduh {result.Item.FileName}"
+            : $"Ditambahkan ke antrean: {result.Item.FileName}";
+
+        return result;
     }
 
     public async Task RefreshNowAsync()
