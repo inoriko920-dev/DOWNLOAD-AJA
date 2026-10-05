@@ -1,4 +1,5 @@
 using DownloadAja.BrowserBridge;
+using DownloadAja.Persistence.Settings;
 
 namespace DownloadAja.Application.Downloads;
 
@@ -10,7 +11,8 @@ namespace DownloadAja.Application.Downloads;
 public sealed class BrowserDownloadHandoffService : IBrowserDownloadHandoff
 {
     private readonly AddDownloadService _addDownloadService;
-    private readonly string _defaultDownloadDirectory;
+    private readonly string? _fixedDefaultDownloadDirectory;
+    private readonly IAppSettingsStore? _settingsStore;
 
     public BrowserDownloadHandoffService(
         AddDownloadService addDownloadService,
@@ -18,7 +20,15 @@ public sealed class BrowserDownloadHandoffService : IBrowserDownloadHandoff
     {
         _addDownloadService = addDownloadService ?? throw new ArgumentNullException(nameof(addDownloadService));
         ArgumentException.ThrowIfNullOrWhiteSpace(defaultDownloadDirectory);
-        _defaultDownloadDirectory = defaultDownloadDirectory;
+        _fixedDefaultDownloadDirectory = defaultDownloadDirectory;
+    }
+
+    public BrowserDownloadHandoffService(
+        AddDownloadService addDownloadService,
+        IAppSettingsStore settingsStore)
+    {
+        _addDownloadService = addDownloadService ?? throw new ArgumentNullException(nameof(addDownloadService));
+        _settingsStore = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
     }
 
     public async Task<BrowserHandoffResponse> HandleAsync(
@@ -49,10 +59,14 @@ public sealed class BrowserDownloadHandoffService : IBrowserDownloadHandoff
 
         try
         {
+            var defaultDirectory = _settingsStore is null
+                ? _fixedDefaultDownloadDirectory!
+                : (await _settingsStore.LoadAsync(cancellationToken).ConfigureAwait(false)).DefaultDownloadDirectory;
+
             var result = await _addDownloadService.AddAsync(
                 new AddDownloadRequest(
                     request.Url,
-                    _defaultDownloadDirectory,
+                    defaultDirectory,
                     FileName: null,
                     StartQueueAfterAdd: request.StartQueueAfterAdd),
                 cancellationToken).ConfigureAwait(false);
