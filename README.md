@@ -4,9 +4,9 @@ Repository pemulihan untuk proyek **DOWNLOAD-AJA**, aplikasi download manager Wi
 
 ## Status
 
-**Recovery audit tahap 1 selesai.**
+**Recovery aktif — R1 sampai R5 sudah direkonstruksi dan terverifikasi.**
 
-Source lama belum berhasil dipulihkan, jadi repo ini memakai aturan provenance ketat:
+Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
 - `ORIGINAL` — berasal dari source lama yang terbukti.
 - `RECOVERED` — dipulihkan dari build/cache/artifact.
@@ -14,6 +14,18 @@ Source lama belum berhasil dipulihkan, jadi repo ini memakai aturan provenance k
 - `NEW` — pengembangan baru setelah recovery.
 
 Jangan menyebut source hasil rekonstruksi sebagai source asli.
+
+## Verified reconstructed baseline
+
+- .NET 8 + WPF shell
+- download domain + versioned persistence
+- deterministic persisted queue core
+- aria2 JSON-RPC engine adapter
+- official aria2 1.37.0 Windows x64 fetched by CI
+- **real HTTPS download integration PASS** through reconstructed `Aria2DownloadEngine`
+- queue regression tests for limit counting, stop-all, persisted ordering, pause/resume, and restart behavior
+
+Latest verified checkpoint: **Windows CI run #52 — PASS**, including real aria2 HTTPS integration.
 
 ## Dokumen recovery
 
@@ -31,4 +43,4 @@ Jangan menyebut source hasil rekonstruksi sebagai source asli.
 
 ## Next ready step
 
-`R1 — Solution skeleton`: membangun pondasi .NET 8/WPF yang modular tanpa menambahkan fitur parity besar lebih dulu.
+`R6 — WPF shell parity + live binding`: hubungkan UI referensi ke queue/domain/aria2 nyata, selection detail, toolbar commands, category filter, progress, speed/ETA, dan status bar.
