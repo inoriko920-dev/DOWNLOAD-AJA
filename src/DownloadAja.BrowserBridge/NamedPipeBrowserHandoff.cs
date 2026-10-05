@@ -87,7 +87,7 @@ public sealed class NamedPipeBrowserHandoffServer
                 PipeDirection.InOut,
                 1,
                 PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous);
+                PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
 
             try
             {
