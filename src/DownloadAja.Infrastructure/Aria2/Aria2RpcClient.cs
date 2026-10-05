@@ -115,6 +115,24 @@ public sealed class Aria2RpcClient : IAria2RpcClient
             ReadOptionalString(result, "errorMessage"));
     }
 
+    public async Task ChangeGlobalDownloadLimitAsync(long bytesPerSecond, CancellationToken cancellationToken = default)
+    {
+        if (bytesPerSecond < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(bytesPerSecond));
+        }
+
+        var rpcOptions = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["max-overall-download-limit"] = bytesPerSecond.ToString(CultureInfo.InvariantCulture)
+        };
+
+        _ = await CallAsync(
+            "aria2.changeGlobalOption",
+            new object?[] { rpcOptions },
+            cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task ShutdownAsync(CancellationToken cancellationToken = default)
     {
         _ = await CallAsync("aria2.shutdown", Array.Empty<object?>(), cancellationToken).ConfigureAwait(false);
