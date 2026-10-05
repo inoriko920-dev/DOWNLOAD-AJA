@@ -4,7 +4,7 @@ Repository pemulihan untuk proyek **DOWNLOAD-AJA**, aplikasi download manager Wi
 
 ## Status
 
-**Recovery aktif — R1 sampai R6 sudah direkonstruksi dan terverifikasi.**
+**Recovery aktif — R1 sampai R7 sudah direkonstruksi dan terverifikasi.**
 
 Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
@@ -24,11 +24,15 @@ Jangan menyebut source hasil rekonstruksi sebagai source asli.
 - official aria2 1.37.0 Windows x64 fetched by CI
 - real HTTPS download integration through reconstructed `Aria2DownloadEngine`
 - live WPF binding ke queue/domain/aria2 state
-- toolbar Mulai / Jeda / Hentikan
+- toolbar Mulai / Jeda / Hentikan / Tambah URL
+- Add URL dialog: URL, filename, destination folder, folder picker, start-queue option
+- HTTP/HTTPS validation + filename inference
+- duplicate URL/path protection + no silent overwrite of existing files
+- default download directory and aria2 split count loaded from persisted settings
 - detail selection, category filters, progress, speed, ETA, status bar
 - periodic refresh + graceful aria2 shutdown
 
-Latest verified checkpoint: **Windows CI run #65 — PASS**, termasuk seluruh solution tests dan real aria2 HTTPS integration.
+Latest verified checkpoint: **Windows CI run #82 — PASS**, termasuk seluruh solution tests dan real aria2 HTTPS integration.
 
 ## Dokumen recovery
 
@@ -46,4 +50,4 @@ Latest verified checkpoint: **Windows CI run #65 — PASS**, termasuk seluruh so
 
 ## Next ready step
 
-`R7 — Add URL flow`: aktifkan tombol Tambah URL dan sambungkan dialog URL/folder/filename/validation/duplicate handling ke queue + aria2 nyata.
+`R8 — Browser handoff core`: single-instance desktop handoff, `--add-url`, local protocol/IPC, reuse AddDownloadService, dan acknowledgement hanya setelah URL benar-benar diterima serta dipersist oleh desktop app.
