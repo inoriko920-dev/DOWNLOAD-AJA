@@ -38,6 +38,26 @@ public sealed class Aria2RpcClientTests
     }
 
     [Fact]
+    public async Task ChangeGlobalDownloadLimit_sends_change_global_option_with_bytes_per_second()
+    {
+        var handler = new RecordingHandler("{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":\"OK\"}");
+        var client = new Aria2RpcClient(
+            new Aria2Options("aria2c.exe", 6800, "secret", 8).Validated(),
+            new HttpClient(handler));
+
+        await client.ChangeGlobalDownloadLimitAsync(2 * 1024 * 1024);
+
+        using var document = JsonDocument.Parse(handler.RequestBody!);
+        var root = document.RootElement;
+        Assert.Equal("aria2.changeGlobalOption", root.GetProperty("method").GetString());
+        var parameters = root.GetProperty("params");
+        Assert.Equal("token:secret", parameters[0].GetString());
+        Assert.Equal(
+            (2 * 1024 * 1024).ToString(),
+            parameters[1].GetProperty("max-overall-download-limit").GetString());
+    }
+
+    [Fact]
     public async Task TellStatus_maps_numeric_strings_and_error_message()
     {
         const string response = """
