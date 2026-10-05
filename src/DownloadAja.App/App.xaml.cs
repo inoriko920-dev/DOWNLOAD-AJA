@@ -4,6 +4,7 @@ using DownloadAja.App.ViewModels;
 using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
 using DownloadAja.Application.Scheduler;
+using DownloadAja.Application.Settings;
 using DownloadAja.BrowserBridge;
 using DownloadAja.Infrastructure.Aria2;
 using DownloadAja.Persistence.Downloads;
@@ -66,7 +67,8 @@ public partial class App : System.Windows.Application
 
             var aria2Options = Aria2Options.CreateDefault(
                 AppContext.BaseDirectory,
-                splitCount: settings.MaxConnectionsPerDownload);
+                splitCount: settings.MaxConnectionsPerDownload,
+                globalDownloadLimitBytesPerSecond: settings.GlobalDownloadLimitBytesPerSecond);
             var rpcClient = new Aria2RpcClient(aria2Options);
             _aria2Runtime = new Aria2ProcessManager(aria2Options, rpcClient);
             var engine = new Aria2DownloadEngine(_aria2Runtime, rpcClient);
@@ -77,9 +79,14 @@ public partial class App : System.Windows.Application
             var coordinator = new DownloadQueueCoordinator(engine, downloadStore, queueStore);
             var scheduler = new QueueSchedulerService(coordinator, schedulerStore);
             var addDownloadService = new AddDownloadService(coordinator);
+            var optionsService = new DownloadOptionsService(
+                settingsStore,
+                coordinator,
+                aria2Options,
+                rpcClient);
             _browserHandoff = new BrowserDownloadHandoffService(
                 addDownloadService,
-                settings.DefaultDownloadDirectory);
+                settingsStore);
 
             _mainViewModel = new MainWindowViewModel(
                 coordinator,
@@ -88,7 +95,7 @@ public partial class App : System.Windows.Application
                 settings.DefaultDownloadDirectory);
             await _mainViewModel.InitializeAsync();
 
-            var window = new MainWindow(_mainViewModel);
+            var window = new MainWindow(_mainViewModel, optionsService);
             MainWindow = window;
             window.Show();
 
