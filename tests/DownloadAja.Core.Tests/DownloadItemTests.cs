@@ -1,4 +1,5 @@
 using DownloadAja.Core.Downloads;
+using Xunit;
 
 namespace DownloadAja.Core.Tests;
 
@@ -45,7 +46,7 @@ public sealed class DownloadItemTests
     }
 
     [Fact]
-    public void Progress_is_clamped_by_validation_and_calculated_from_bytes()
+    public void Progress_is_calculated_from_bytes()
     {
         var item = CreateItem();
         item.TransitionTo(DownloadState.Downloading);
