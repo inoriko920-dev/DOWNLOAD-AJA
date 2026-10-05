@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **R1–R6 COMPLETE / R7 READY**
+Status: **R1–R7 COMPLETE / R8 READY**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -20,7 +20,7 @@ Status: DONE
 
 - [x] .NET 8 solution.
 - [x] WPF desktop project.
-- [x] Core / Infrastructure / Persistence / BrowserBridge projects.
+- [x] Core / Application / Infrastructure / Persistence / BrowserBridge projects.
 - [x] xUnit projects.
 - [x] Windows CI.
 - [x] shell UI mengikuti struktur referensi Library.
@@ -111,7 +111,7 @@ Implemented as `RECONSTRUCTED`:
 - [x] WPF ViewModel layer.
 - [x] live queue collection binding.
 - [x] selection → Detail Unduhan binding.
-- [x] toolbar commands: Mulai, Jeda, Hentikan.
+- [x] toolbar commands: Mulai, Jeda, Hentikan, Mulai Ulang.
 - [x] Stop All + manual Refresh commands.
 - [x] category filters: Semua, Selesai, Belum Selesai, Antrean, Video, Audio, Dokumen, Arsip, Program.
 - [x] real progress/speed/ETA presentation from domain/aria2 state.
@@ -119,14 +119,6 @@ Implemented as `RECONSTRUCTED`:
 - [x] periodic engine refresh without blocking the UI thread.
 - [x] graceful WPF shutdown → owned aria2 shutdown.
 - [x] future/unrecovered toolbar features remain visibly disabled instead of using fake behavior.
-
-Not activated yet:
-
-- `Tambah URL` — belongs to R7.
-- permanent `Hapus` — destructive semantics are not yet recovered/locked.
-- `Jadwal` — R10.
-- `Ambil dari Browser` — R8/R9.
-- `Opsi` / other parity dialogs — later recovery waves.
 
 Verification: **Windows CI run #65 PASS**:
 
@@ -140,29 +132,51 @@ UI acceptance uses real queue/domain state; no static dummy download rows are us
 
 ## R7 — Add URL flow
 
-Status: READY
+Status: DONE — HTTP/HTTPS BASELINE
 
-Target:
+Implemented as `RECONSTRUCTED`:
 
-- Tambah URL dialog;
-- destination folder;
-- filename resolution;
-- duplicate handling;
-- start now / queue behavior;
-- validation;
-- add item into real persisted queue.
+- [x] active `Tambah URL` toolbar button.
+- [x] `Unduh > Tambah URL...` menu entry.
+- [x] WPF dialog for URL, filename, destination folder, and start-queue option.
+- [x] Windows folder picker.
+- [x] HTTP/HTTPS URL validation.
+- [x] deterministic filename inference from URL path.
+- [x] optional user filename validation/sanitization.
+- [x] default destination loaded from persisted app settings.
+- [x] aria2 split count loaded from persisted app settings.
+- [x] destination directory normalization/creation.
+- [x] reject duplicate source URL.
+- [x] reject duplicate destination path.
+- [x] reject overwrite when target file already exists on disk.
+- [x] persist added item into real queue/history store.
+- [x] optional start queue immediately after add.
+- [x] select newly added item in live UI.
+- [x] application tests for valid add, filename inference, start behavior, invalid schemes, duplicates, and existing target files.
+
+Verification: **Windows CI run #82 PASS**:
+
+- Restore: PASS
+- Build: PASS
+- all solution tests including Add URL tests: PASS
+- official aria2 1.37.0 Windows x64 fetch: PASS
+- real aria2 HTTPS integration: PASS
 
 ## R8 — Browser handoff core
+
+Status: READY
 
 Target:
 
 - single-instance desktop handoff;
 - `--add-url` compatible entry path;
 - local protocol/RPC contract;
-- success only after URL accepted;
-- startup URL and running-instance URL tests.
+- reuse R7 `AddDownloadService` validation and persistence path;
+- success only after URL is accepted/persisted by desktop app;
+- startup URL and running-instance URL tests;
+- no browser-specific logic inside WPF ViewModel.
 
-Regression target:
+Regression targets:
 
 - startup/browser URL handling;
 - async single-instance dispatch;
