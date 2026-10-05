@@ -26,6 +26,7 @@ public sealed class Aria2ProcessManagerTests
         public Task ResumeAsync(string gid, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task RemoveAsync(string gid, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<Aria2Status> TellStatusAsync(string gid, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task ChangeGlobalDownloadLimitAsync(long bytesPerSecond, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task ShutdownAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }
