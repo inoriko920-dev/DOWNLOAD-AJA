@@ -1,11 +1,13 @@
 namespace DownloadAja.BrowserBridge;
 
 /// <summary>
-/// RECONSTRUCTED protocol boundary for browser-to-desktop handoff.
-/// The concrete implementation must acknowledge only after the desktop app
-/// has accepted the URL, matching a historical regression target.
+/// RECONSTRUCTED application-facing boundary for browser/secondary-instance
+/// requests. Success must only be returned after the desktop application has
+/// actually accepted and persisted the request.
 /// </summary>
 public interface IBrowserDownloadHandoff
 {
-    Task<bool> TryAcceptAsync(Uri sourceUri, CancellationToken cancellationToken = default);
+    Task<BrowserHandoffResponse> HandleAsync(
+        BrowserHandoffRequest request,
+        CancellationToken cancellationToken = default);
 }
