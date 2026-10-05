@@ -38,7 +38,7 @@
             </MenuItem>
             <MenuItem Header="Jadwal" Click="SchedulerButton_OnClick" ToolTip="Atur jam mulai dan berhenti antrean harian." />
             <MenuItem Header="Kategori" />
-            <MenuItem Header="Pilihan" IsEnabled="False" ToolTip="Dialog opsi dikerjakan pada wave parity berikutnya." />
+            <MenuItem Header="Pilihan" Click="OptionsButton_OnClick" ToolTip="Atur folder, koneksi, unduhan bersamaan, dan batas kecepatan." />
             <MenuItem Header="Bantuan" IsEnabled="False" />
         </Menu>
 
@@ -55,7 +55,7 @@
                     <Button Width="78" Height="58" Margin="2" Content="Jadwal" Click="SchedulerButton_OnClick" ToolTip="Atur jadwal antrean harian." />
                     <Button Width="112" Height="58" Margin="2" Content="Ambil dari Browser" IsEnabled="False" ToolTip="Browser integration berjalan melalui Chrome extension pada R9." />
                     <Separator />
-                    <Button Width="70" Height="58" Margin="2" Content="Opsi" IsEnabled="False" />
+                    <Button Width="70" Height="58" Margin="2" Content="Opsi" Click="OptionsButton_OnClick" ToolTip="Atur koneksi dan batas kecepatan." />
                     <Button Width="78" Height="58" Margin="2" Content="Refresh" Command="{Binding RefreshCommand}" />
                 </ToolBar>
             </ToolBarTray>
