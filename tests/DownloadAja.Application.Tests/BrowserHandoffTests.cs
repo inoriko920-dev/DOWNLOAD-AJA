@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
 using DownloadAja.BrowserBridge;
@@ -37,6 +38,35 @@ public sealed class BrowserHandoffTests
 
         Assert.True(first.IsPrimary);
         Assert.False(second.IsPrimary);
+    }
+
+    [Fact]
+    public async Task Native_message_frame_round_trips_request()
+    {
+        var expected = NativeMessagingProtocol.CreateAddUrl(
+            "https://example.com/native-host.zip",
+            startQueueAfterAdd: false);
+        using var stream = new MemoryStream();
+
+        await NativeMessagingFraming.WriteAsync(stream, expected);
+        stream.Position = 0;
+
+        var actual = await NativeMessagingFraming.ReadAsync<NativeHostRequest>(stream);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task Native_message_reader_rejects_oversized_payload()
+    {
+        var header = new byte[sizeof(int)];
+        BinaryPrimitives.WriteInt32LittleEndian(
+            header,
+            NativeMessagingFraming.MaxMessageBytes + 1);
+        using var stream = new MemoryStream(header);
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            async () => await NativeMessagingFraming.ReadAsync<NativeHostRequest>(stream));
     }
 
     [Fact]
