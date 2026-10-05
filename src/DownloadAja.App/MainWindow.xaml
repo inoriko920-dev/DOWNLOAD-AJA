@@ -6,7 +6,8 @@
         Height="760"
         MinWidth="900"
         MinHeight="600"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        PreviewKeyDown="MainWindow_OnPreviewKeyDown">
     <Grid Background="#FFF4F4F4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
