@@ -166,13 +166,11 @@ async function notify(title, message) {
   try {
     await chrome.notifications.create({
       type: "basic",
-      iconUrl: "icon128.png",
+      iconUrl: "icon.svg",
       title,
       message
     });
   } catch (error) {
-    // Icons are added during packaging. During unpacked development Chrome may
-    // reject the notification; logging is preferable to breaking the handoff.
     console.info(`${title}: ${message}`, error);
   }
 }
