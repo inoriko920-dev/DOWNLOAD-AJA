@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "DOWNLOAD-AJA Integration",
+  "version": "0.1.0",
+  "description": "Kirim link dan unduhan Chrome ke DOWNLOAD-AJA melalui native messaging lokal.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtcDjvatO2+k6YwBQsp9R2QFaXPgfThTEhjX4e95BVpYghWn4D9nOY6Xi++Rl4QL7hXulhzqJTx3QCVlX+4eY53XwDiKngA4CnuBIcMwJY0JEQRv8a1mGnZkBO43TYLWaUo3haInk7JXAlix4qHI/SxIDPsmDjGSDGb6+6klpoa2Z6QduEpeuSIcuz4ShtHxdNig9Sj48RXds4fRXit70mpG2Kz9UKHCsgmEkkl4phLQp4pdBAAe3MCcaL79uA7rYRezRJp00JQGie13FmaDCSbsXfy4+uC5mMz1lTSZEBZMZHs3w4Ycd1LY5RgM0CBWtmbmVG+gCjgUEgTIsZulErQIDAQAB",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "downloads",
+    "nativeMessaging",
+    "notifications",
+    "storage",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "action": {
+    "default_title": "Kirim ke DOWNLOAD-AJA"
+  },
+  "options_page": "options.html"
+}
