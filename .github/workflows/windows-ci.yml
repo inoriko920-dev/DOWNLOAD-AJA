@@ -34,6 +34,29 @@ jobs:
       - name: Unit and persistence tests
         run: dotnet test DownloadAja.sln --configuration Release --no-build --verbosity normal
 
+      - name: Validate Chrome MV3 integration assets
+        shell: pwsh
+        run: |
+          node --check browser-extension/chrome-mv3/service_worker.js
+          node --check browser-extension/chrome-mv3/options.js
+          node browser-extension/validate.mjs
+
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path 'tools/install-chrome-integration.ps1'),
+            [ref]$tokens,
+            [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) { throw ($errors | Out-String) }
+
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path 'tools/uninstall-chrome-integration.ps1'),
+            [ref]$tokens,
+            [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) { throw ($errors | Out-String) }
+
       - name: Fetch official aria2 1.37.0 Windows x64
         shell: pwsh
         run: |
