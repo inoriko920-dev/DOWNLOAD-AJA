@@ -3,10 +3,12 @@ using System.Windows;
 using DownloadAja.App.ViewModels;
 using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
+using DownloadAja.Application.Scheduler;
 using DownloadAja.BrowserBridge;
 using DownloadAja.Infrastructure.Aria2;
 using DownloadAja.Persistence.Downloads;
 using DownloadAja.Persistence.Queue;
+using DownloadAja.Persistence.Scheduler;
 using DownloadAja.Persistence.Settings;
 
 namespace DownloadAja.App;
@@ -71,7 +73,9 @@ public partial class App : System.Windows.Application
 
             var downloadStore = new JsonDownloadStore(Path.Combine(dataDirectory, "downloads.json"));
             var queueStore = new JsonQueueStateStore(Path.Combine(dataDirectory, "queue.json"));
+            var schedulerStore = new JsonSchedulerStateStore(Path.Combine(dataDirectory, "scheduler.json"));
             var coordinator = new DownloadQueueCoordinator(engine, downloadStore, queueStore);
+            var scheduler = new QueueSchedulerService(coordinator, schedulerStore);
             var addDownloadService = new AddDownloadService(coordinator);
             _browserHandoff = new BrowserDownloadHandoffService(
                 addDownloadService,
@@ -80,6 +84,7 @@ public partial class App : System.Windows.Application
             _mainViewModel = new MainWindowViewModel(
                 coordinator,
                 addDownloadService,
+                scheduler,
                 settings.DefaultDownloadDirectory);
             await _mainViewModel.InitializeAsync();
 
