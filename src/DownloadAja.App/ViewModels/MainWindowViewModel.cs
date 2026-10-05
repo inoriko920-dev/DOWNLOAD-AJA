@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
 using DownloadAja.Application.Scheduler;
+using DownloadAja.Application.Settings;
 using DownloadAja.Core.Downloads;
 using DownloadAja.Persistence.Scheduler;
 
@@ -84,7 +85,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     public ObservableCollection<DownloadRowViewModel> Downloads { get; }
     public ICollectionView DownloadsView { get; }
     public ObservableCollection<CategoryFilterOption> Categories { get; }
-    public string DefaultDownloadDirectory { get; }
+    public string DefaultDownloadDirectory { get; private set; }
 
     public AsyncRelayCommand StartCommand { get; }
     public AsyncRelayCommand PauseCommand { get; }
@@ -210,6 +211,19 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         await RefreshSchedulerStatusAsync();
         await RefreshFromCoordinatorAsync(refreshEngine: false);
         StatusText = enabled ? "Jadwal antrean diperbarui" : "Jadwal antrean dinonaktifkan";
+    }
+
+    public void ApplyOptionsPresentation(DownloadOptionsSnapshot options, bool speedAppliedLive)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        DefaultDownloadDirectory = options.DefaultDownloadDirectory;
+        OnPropertyChanged(nameof(DefaultDownloadDirectory));
+
+        var speedText = options.GlobalDownloadLimitBytesPerSecond == 0
+            ? "tanpa batas"
+            : FormatBytesPerSecond(options.GlobalDownloadLimitBytesPerSecond);
+        var applyText = speedAppliedLive ? "diterapkan langsung" : "tersimpan untuk runtime aria2 berikutnya";
+        StatusText = $"Pilihan diperbarui — batas kecepatan {speedText}, {applyText}";
     }
 
     public async Task<AddDownloadResult> AddDownloadAsync(AddDownloadRequest request)
