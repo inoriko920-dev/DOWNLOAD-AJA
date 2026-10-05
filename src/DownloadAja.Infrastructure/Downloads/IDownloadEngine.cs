@@ -4,7 +4,6 @@ namespace DownloadAja.Infrastructure.Downloads;
 
 /// <summary>
 /// RECONSTRUCTED boundary for the external download engine.
-/// aria2 integration will implement this contract in a later recovery step.
 /// </summary>
 public interface IDownloadEngine
 {
@@ -12,4 +11,5 @@ public interface IDownloadEngine
     Task PauseAsync(Guid downloadId, CancellationToken cancellationToken = default);
     Task ResumeAsync(Guid downloadId, CancellationToken cancellationToken = default);
     Task StopAsync(Guid downloadId, CancellationToken cancellationToken = default);
+    Task<DownloadEngineSnapshot?> GetStatusAsync(Guid downloadId, CancellationToken cancellationToken = default);
 }
