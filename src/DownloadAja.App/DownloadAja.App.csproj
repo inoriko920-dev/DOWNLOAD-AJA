@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DownloadAja.Application\DownloadAja.Application.csproj" />
+    <ProjectReference Include="..\DownloadAja.BrowserBridge\DownloadAja.BrowserBridge.csproj" />
     <ProjectReference Include="..\DownloadAja.Core\DownloadAja.Core.csproj" />
     <ProjectReference Include="..\DownloadAja.Infrastructure\DownloadAja.Infrastructure.csproj" />
     <ProjectReference Include="..\DownloadAja.Persistence\DownloadAja.Persistence.csproj" />
