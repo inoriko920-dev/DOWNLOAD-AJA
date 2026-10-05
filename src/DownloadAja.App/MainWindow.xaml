@@ -32,7 +32,7 @@
                 <MenuItem Header="Mulai Ulang" Command="{Binding RestartCommand}" />
             </MenuItem>
             <MenuItem Header="Lihat" />
-            <MenuItem Header="Jadwal" IsEnabled="False" ToolTip="Dikerjakan pada tahap scheduler." />
+            <MenuItem Header="Jadwal" Click="SchedulerButton_OnClick" ToolTip="Atur jam mulai dan berhenti antrean harian." />
             <MenuItem Header="Kategori" />
             <MenuItem Header="Pilihan" IsEnabled="False" ToolTip="Dialog opsi dikerjakan setelah baseline UI hidup." />
             <MenuItem Header="Bantuan" IsEnabled="False" />
@@ -48,8 +48,8 @@
                     <Button Width="70" Height="58" Margin="2" Content="Hentikan" Command="{Binding StopCommand}" />
                     <Button Width="70" Height="58" Margin="2" Content="Hapus" IsEnabled="False" ToolTip="Penghapusan permanen belum diaktifkan pada baseline recovery." />
                     <Separator />
-                    <Button Width="78" Height="58" Margin="2" Content="Jadwal" IsEnabled="False" ToolTip="Tahap scheduler." />
-                    <Button Width="112" Height="58" Margin="2" Content="Ambil dari Browser" IsEnabled="False" ToolTip="Tahap browser bridge." />
+                    <Button Width="78" Height="58" Margin="2" Content="Jadwal" Click="SchedulerButton_OnClick" ToolTip="Atur jadwal antrean harian." />
+                    <Button Width="112" Height="58" Margin="2" Content="Ambil dari Browser" IsEnabled="False" ToolTip="Browser integration berjalan melalui Chrome extension pada R9." />
                     <Separator />
                     <Button Width="70" Height="58" Margin="2" Content="Opsi" IsEnabled="False" />
                     <Button Width="78" Height="58" Margin="2" Content="Refresh" Command="{Binding RefreshCommand}" />
@@ -143,6 +143,7 @@
                 <StackPanel Margin="12">
                     <TextBlock Text="Status runtime" FontWeight="SemiBold" />
                     <TextBlock Margin="0,6,0,0" Text="{Binding StatusText}" TextWrapping="Wrap" />
+                    <TextBlock Margin="0,6,0,0" Text="{Binding SchedulerStatusText}" Foreground="Gray" />
                 </StackPanel>
             </TabItem>
         </TabControl>
