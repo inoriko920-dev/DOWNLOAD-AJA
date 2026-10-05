@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DownloadAja.Application\DownloadAja.Application.csproj" />
+    <ProjectReference Include="..\..\src\DownloadAja.BrowserBridge\DownloadAja.BrowserBridge.csproj" />
   </ItemGroup>
 </Project>
