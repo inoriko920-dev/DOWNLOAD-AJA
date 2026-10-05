@@ -108,7 +108,7 @@ public sealed class BrowserHandoffTests
 
             var snapshot = await coordinator.GetSnapshotAsync();
             var item = Assert.Single(snapshot.Items);
-            Assert.Equal(response.DownloadId, item.Id);
+            Assert.Equal(response.DownloadId!.Value, item.Id);
             Assert.Equal("from-browser.zip", item.FileName);
         }
         finally
