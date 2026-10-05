@@ -3,7 +3,4 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>DownloadAja.BrowserBridge</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DownloadAja.Core\DownloadAja.Core.csproj" />
-  </ItemGroup>
 </Project>
