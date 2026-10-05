@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>DownloadAja.App</RootNamespace>
+    <AssemblyName>Download Aja</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DownloadAja.Core\DownloadAja.Core.csproj" />
+  </ItemGroup>
+</Project>
