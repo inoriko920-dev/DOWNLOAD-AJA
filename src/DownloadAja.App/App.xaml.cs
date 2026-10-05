@@ -1,10 +1,12 @@
 using System.IO;
 using System.Windows;
 using DownloadAja.App.ViewModels;
+using DownloadAja.Application.Downloads;
 using DownloadAja.Application.Queue;
 using DownloadAja.Infrastructure.Aria2;
 using DownloadAja.Persistence.Downloads;
 using DownloadAja.Persistence.Queue;
+using DownloadAja.Persistence.Settings;
 
 namespace DownloadAja.App;
 
@@ -25,7 +27,12 @@ public partial class App : System.Windows.Application
                 "recovery-v1");
             Directory.CreateDirectory(dataDirectory);
 
-            var aria2Options = Aria2Options.CreateDefault(AppContext.BaseDirectory, splitCount: 8);
+            var settingsStore = new JsonAppSettingsStore(Path.Combine(dataDirectory, "settings.json"));
+            var settings = await settingsStore.LoadAsync();
+
+            var aria2Options = Aria2Options.CreateDefault(
+                AppContext.BaseDirectory,
+                splitCount: settings.MaxConnectionsPerDownload);
             var rpcClient = new Aria2RpcClient(aria2Options);
             _aria2Runtime = new Aria2ProcessManager(aria2Options, rpcClient);
             var engine = new Aria2DownloadEngine(_aria2Runtime, rpcClient);
@@ -33,8 +40,12 @@ public partial class App : System.Windows.Application
             var downloadStore = new JsonDownloadStore(Path.Combine(dataDirectory, "downloads.json"));
             var queueStore = new JsonQueueStateStore(Path.Combine(dataDirectory, "queue.json"));
             var coordinator = new DownloadQueueCoordinator(engine, downloadStore, queueStore);
+            var addDownloadService = new AddDownloadService(coordinator);
 
-            _mainViewModel = new MainWindowViewModel(coordinator);
+            _mainViewModel = new MainWindowViewModel(
+                coordinator,
+                addDownloadService,
+                settings.DefaultDownloadDirectory);
             await _mainViewModel.InitializeAsync();
 
             var window = new MainWindow(_mainViewModel);
