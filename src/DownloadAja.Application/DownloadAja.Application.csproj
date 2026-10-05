@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>DownloadAja.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DownloadAja.Core\DownloadAja.Core.csproj" />
+    <ProjectReference Include="..\DownloadAja.Infrastructure\DownloadAja.Infrastructure.csproj" />
+    <ProjectReference Include="..\DownloadAja.Persistence\DownloadAja.Persistence.csproj" />
+  </ItemGroup>
+</Project>
