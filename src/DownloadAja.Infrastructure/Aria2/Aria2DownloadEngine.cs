@@ -5,8 +5,7 @@ using DownloadAja.Infrastructure.Downloads;
 namespace DownloadAja.Infrastructure.Aria2;
 
 /// <summary>
-/// RECONSTRUCTED aria2-backed engine adapter. Real network-download acceptance is
-/// intentionally separate from unit tests and requires an actual aria2 binary.
+/// RECONSTRUCTED aria2-backed engine adapter.
 /// </summary>
 public sealed class Aria2DownloadEngine : IDownloadEngine
 {
@@ -72,8 +71,15 @@ public sealed class Aria2DownloadEngine : IDownloadEngine
     public async Task StopAsync(Guid downloadId, CancellationToken cancellationToken = default)
     {
         var entry = GetRequiredEntry(downloadId);
-        if (entry.Item.State is DownloadState.Completed or DownloadState.Stopped)
+        if (entry.Item.State == DownloadState.Completed)
         {
+            _entries.TryRemove(downloadId, out _);
+            return;
+        }
+
+        if (entry.Item.State == DownloadState.Stopped)
+        {
+            _entries.TryRemove(downloadId, out _);
             return;
         }
 
@@ -96,13 +102,20 @@ public sealed class Aria2DownloadEngine : IDownloadEngine
 
         ApplyAriaState(entry.Item, status);
 
-        return new DownloadEngineSnapshot(
+        var snapshot = new DownloadEngineSnapshot(
             entry.Item.Id,
             entry.Item.State,
             entry.Item.DownloadedBytes,
             entry.Item.TotalBytes,
             entry.Item.SpeedBytesPerSecond,
             entry.Item.LastError);
+
+        if (entry.Item.State is DownloadState.Completed or DownloadState.Failed or DownloadState.Stopped)
+        {
+            _entries.TryRemove(downloadId, out _);
+        }
+
+        return snapshot;
     }
 
     private EngineEntry GetRequiredEntry(Guid downloadId)
@@ -170,8 +183,6 @@ public sealed class Aria2DownloadEngine : IDownloadEngine
                 break;
 
             case "waiting":
-                // aria2 may report internal waiting even after addUri. Queue ownership is
-                // recovered separately in R5, so do not force an invalid domain transition.
                 break;
 
             default:
