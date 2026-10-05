@@ -28,6 +28,18 @@ public sealed class BrowserHandoffTests
     }
 
     [Fact]
+    public void Single_instance_guard_marks_only_first_guard_as_primary()
+    {
+        var mutexName = $"Local\\DownloadAja.Tests.{Guid.NewGuid():N}";
+
+        using var first = SingleInstanceGuard.Acquire(mutexName);
+        using var second = SingleInstanceGuard.Acquire(mutexName);
+
+        Assert.True(first.IsPrimary);
+        Assert.False(second.IsPrimary);
+    }
+
+    [Fact]
     public async Task Pipe_client_does_not_receive_success_before_handler_finishes()
     {
         var pipeName = $"DownloadAja.Tests.{Guid.NewGuid():N}";
