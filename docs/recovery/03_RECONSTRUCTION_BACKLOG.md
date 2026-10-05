@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **R1–R3 COMPLETE / R4 READY**
+Status: **R1–R5 COMPLETE / R6 READY**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -18,139 +18,118 @@ Status: DONE
 
 Status: DONE
 
-Selesai dibuat sebagai `RECONSTRUCTED`:
-
 - [x] .NET 8 solution.
 - [x] WPF desktop project.
-- [x] domain/core project.
-- [x] infrastructure/engine adapter project.
-- [x] persistence project.
-- [x] browser bridge contract project.
-- [x] xUnit test projects.
+- [x] Core / Infrastructure / Persistence / BrowserBridge projects.
+- [x] xUnit projects.
+- [x] Windows CI.
 - [x] shell UI mengikuti struktur referensi Library.
-- [x] Windows CI workflow.
-- [x] Restore PASS.
-- [x] Build PASS.
-- [x] Unit test PASS.
 
 ## R2 — Download domain
 
 Status: DONE
 
-Selesai sebagai `RECONSTRUCTED`:
-
-- [x] DownloadItem identity.
-- [x] URL + destination.
-- [x] state machine Waiting / Downloading / Paused / Completed / Stopped / Failed.
-- [x] progress bytes/percent.
-- [x] speed/ETA representation.
-- [x] timestamps.
-- [x] error model.
-- [x] category/type inference untuk Video, Audio, Document, Archive, Program, Other.
-- [x] immutable restore path untuk persistence.
-- [x] versioned `DownloadItemSnapshot` schema v1.
-- [x] complete transition-matrix regression test.
-- [x] invalid transitions rejected.
-- [x] snapshot round-trip tests.
+- [x] DownloadItem identity, URL, destination.
+- [x] Waiting / Downloading / Paused / Completed / Stopped / Failed.
+- [x] progress, speed, ETA, timestamp, error.
+- [x] category inference.
+- [x] versioned snapshot schema v1.
+- [x] restore path.
+- [x] complete transition matrix tests.
 
 ## R3 — Persistence
 
 Status: DONE
 
-Selesai sebagai `RECONSTRUCTED`:
-
 - [x] atomic download history store.
-- [x] versioned queue-state store.
-- [x] persisted queue ordering.
-- [x] persisted max simultaneous downloads + running flag.
-- [x] versioned application-settings store.
-- [x] default download-directory setting.
-- [x] max connections per download setting.
-- [x] historical aria2 max-connections clamp `1..20`.
-- [x] same-directory temp write + atomic replacement.
-- [x] corrupt-primary recovery from valid temp state.
-- [x] in-process serialization for concurrent writers to the same file.
-- [x] tests for history, queue order, settings, corruption recovery, and concurrent writers.
-
-Windows CI run #22 for the R2/R3 checkpoint:
-
-- Restore: PASS
-- Build: PASS
-- Test: PASS
-
-Regression targets covered:
-
-- historical save race: guarded by serialized writers + atomic replacement;
-- persisted queue order: explicit versioned queue-state contract;
-- historical aria2 max 20: settings validation prevents values >20.
+- [x] persisted queue state/order.
+- [x] app-settings store.
+- [x] temp-file recovery.
+- [x] concurrent writer serialization.
+- [x] queue/settings/history tests.
+- [x] historical requested split/max setting `1..20` retained.
 
 ## R4 — aria2 engine adapter
 
-Status: READY
+Status: DONE — BASELINE HTTP/HTTPS VERIFIED
 
-Target:
+- [x] private local JSON-RPC client.
+- [x] random RPC secret.
+- [x] process lifecycle and health gate.
+- [x] add URI.
+- [x] pause/resume/remove.
+- [x] status polling.
+- [x] GID mapping.
+- [x] progress/speed/ETA/error mapping.
+- [x] graceful shutdown.
+- [x] terminal GID cleanup.
+- [x] actionable missing-binary diagnostics.
+- [x] split count up to 20; per-server connection clamp 16.
+- [x] RPC/unit tests.
+- [x] real official aria2 1.37.0 Windows x64 fetched in CI.
+- [x] real HTTPS download through reconstructed engine.
 
-- process lifecycle;
-- locate/bundle aria2 executable without assuming it is globally installed;
-- private RPC endpoint/token;
-- RPC health check;
-- add URI;
-- pause/resume/remove;
-- status polling;
-- map aria2 GID to DownloadItem id;
-- max connection clamp 1..20;
-- graceful shutdown;
-- stale/orphan process handling;
-- clear engine diagnostics.
+Verification: **Windows CI run #44 PASS** including real aria2 HTTPS integration.
 
-Acceptance:
-
-- unit tests for RPC payload/result mapping;
-- connection clamp test;
-- process lifecycle test where feasible;
-- real HTTP/HTTPS download integration test once an aria2 binary is supplied/bundled;
-- partial-download resume test once binary is available;
-- no WPF dependency in engine layer.
-
-Important: do not claim real aria2 download PASS until the binary is actually available to CI/test execution.
+Catatan: partial-download interruption/resume stress coverage dapat ditambah pada hardening wave; baseline `continue=true` sudah dikirim ke aria2.
 
 ## R5 — Queue core
 
-Target:
+Status: DONE
 
-- waiting/running/paused/completed/failed;
-- max simultaneous downloads;
-- deterministic dequeue;
-- stop-all semantics;
-- retained completed items;
-- reorder + persisted order.
+- [x] `DownloadAja.Application` orchestration layer.
+- [x] deterministic dequeue from persisted order.
+- [x] max simultaneous downloads.
+- [x] active-count enforcement.
+- [x] completion starts exactly next waiting item.
+- [x] pause frees slot.
+- [x] resume rejected if capacity is full.
+- [x] individual stop does not silently auto-restart.
+- [x] explicit restart/requeue.
+- [x] stop-all disables scheduling before stopping active items.
+- [x] completed items retained.
+- [x] reorder persisted.
+- [x] persisted order reused by a new coordinator instance.
+- [x] transient Downloading/Paused state normalized safely after app restart while preserving progress bytes.
+- [x] queue regression tests.
 
-Regression target:
+Historical regressions addressed:
 
 - queue-limit counting;
 - stop-all continuation;
 - persisted queue order unused.
 
-## R6 — WPF shell parity
+Verification: **Windows CI run #52 PASS**, including all solution tests and real aria2 HTTPS integration.
 
-Status: PARTIAL FOUNDATION EXISTS
+## R6 — WPF shell parity + live binding
 
-Sudah ada struktur visual:
+Status: READY
 
-- [x] menu bar;
-- [x] toolbar;
-- [x] category sidebar;
-- [x] seven-column download table;
-- [x] detail/progress/log tabs;
+Existing visual foundation:
+
+- [x] menu bar.
+- [x] toolbar.
+- [x] category sidebar.
+- [x] seven-column download table.
+- [x] detail/progress/log tabs.
 - [x] status bar.
 
-Belum:
+Next target:
 
-- [ ] selection/detail binding;
-- [ ] real state binding;
-- [ ] toolbar commands;
-- [ ] category filters;
-- [ ] progress presentation nyata.
+- [ ] application composition/bootstrap.
+- [ ] WPF ViewModel layer.
+- [ ] live queue collection binding.
+- [ ] selection → Detail Unduhan binding.
+- [ ] toolbar commands: Mulai, Jeda, Hentikan, Hapus where recovery contract supports it.
+- [ ] category filters.
+- [ ] real progress/speed/ETA presentation.
+- [ ] active-count / total-speed status bar.
+- [ ] periodic engine refresh without blocking UI.
+- [ ] graceful app shutdown and aria2 shutdown.
+
+Gate:
+
+UI acceptance must use queue/domain state, not static dummy rows.
 
 ## R7 — Add URL flow
 
@@ -161,7 +140,8 @@ Target:
 - filename resolution;
 - duplicate handling;
 - start now / queue behavior;
-- validation.
+- validation;
+- add item into real persisted queue.
 
 ## R8 — Browser handoff core
 
@@ -201,7 +181,7 @@ Target:
 
 ## R11 — IDM-parity recovery wave
 
-Hanya dikerjakan setelah core stabil. Kandidat historis:
+Only after core recovery is stable. Historical candidates:
 
 - search/filter;
 - speed limiter;
@@ -214,20 +194,21 @@ Hanya dikerjakan setelah core stabil. Kandidat historis:
 - offline-site storage;
 - improved media/browser detection.
 
-Setiap item harus mempunyai provenance: HISTORICAL atau NEW.
+Each item must keep provenance: HISTORICAL or NEW.
 
 ## R12 — Build & portable acceptance
 
 Target:
 
-- Windows CI build;
-- test suite green;
+- Windows CI green;
+- full test suite green;
 - portable artifact;
+- bundled aria2 runtime;
 - dependency inventory;
 - SHA-256;
-- clean-machine/fresh-folder startup test;
-- no admin required untuk portable baseline kecuali fitur integrasi tertentu memang membutuhkan tindakan eksplisit.
+- fresh-folder startup test;
+- no admin required for portable baseline unless an integration feature explicitly requires it.
 
 ## Release rule
 
-Jangan memberi label "recovered stable" sebelum R0-R10 selesai dan diuji. R11 dapat berjalan bertahap setelah baseline recovery stabil.
+Do not label the project `recovered stable` before R0–R10 are implemented and verified. Reconstructed code remains `RECONSTRUCTED` unless old source evidence is actually recovered.
