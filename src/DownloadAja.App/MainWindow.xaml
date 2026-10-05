@@ -31,10 +31,13 @@
                 <MenuItem Header="Hentikan" Command="{Binding StopCommand}" />
                 <MenuItem Header="Mulai Ulang" Command="{Binding RestartCommand}" />
             </MenuItem>
-            <MenuItem Header="Lihat" />
+            <MenuItem Header="Lihat">
+                <MenuItem Header="Fokus Pencarian" Click="FocusSearch_OnClick" InputGestureText="Ctrl+F" />
+                <MenuItem Header="Bersihkan Pencarian" Click="ClearSearch_OnClick" />
+            </MenuItem>
             <MenuItem Header="Jadwal" Click="SchedulerButton_OnClick" ToolTip="Atur jam mulai dan berhenti antrean harian." />
             <MenuItem Header="Kategori" />
-            <MenuItem Header="Pilihan" IsEnabled="False" ToolTip="Dialog opsi dikerjakan setelah baseline UI hidup." />
+            <MenuItem Header="Pilihan" IsEnabled="False" ToolTip="Dialog opsi dikerjakan pada wave parity berikutnya." />
             <MenuItem Header="Bantuan" IsEnabled="False" />
         </Menu>
 
@@ -77,27 +80,56 @@
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFE2E2E2" />
 
-            <DataGrid Grid.Column="2"
-                      Margin="0,6,6,6"
-                      ItemsSource="{Binding DownloadsView}"
-                      SelectedItem="{Binding SelectedDownload, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      CanUserAddRows="False"
-                      SelectionMode="Single"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="Horizontal"
-                      Background="White">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nama File" Width="2.5*" Binding="{Binding FileName}" />
-                    <DataGridTextColumn Header="Ukuran" Width="1.25*" Binding="{Binding SizeText}" />
-                    <DataGridTextColumn Header="Status" Width="1.35*" Binding="{Binding StatusText}" />
-                    <DataGridTextColumn Header="Kecepatan" Width="1*" Binding="{Binding SpeedText}" />
-                    <DataGridTextColumn Header="Sisa Waktu" Width="1*" Binding="{Binding EtaText}" />
-                    <DataGridTextColumn Header="Tanggal" Width="1.25*" Binding="{Binding DateText}" />
-                    <DataGridTextColumn Header="Folder" Width="1.6*" Binding="{Binding Folder}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            <DockPanel Grid.Column="2" Margin="0,6,6,6" LastChildFill="True">
+                <Border DockPanel.Dock="Top"
+                        Margin="0,0,0,5"
+                        Padding="6,5"
+                        BorderBrush="#FFC8C8C8"
+                        BorderThickness="1"
+                        Background="White">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"
+                                   Text="Cari:" />
+                        <TextBox x:Name="SearchTextBox"
+                                 Grid.Column="1"
+                                 MinWidth="220"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Cari nama file, URL, folder, status, kategori, atau pesan error." />
+                        <Button Grid.Column="2"
+                                Margin="6,0,0,0"
+                                Padding="10,2"
+                                Content="Bersihkan"
+                                Click="ClearSearch_OnClick" />
+                    </Grid>
+                </Border>
+
+                <DataGrid ItemsSource="{Binding DownloadsView}"
+                          SelectedItem="{Binding SelectedDownload, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          SelectionMode="Single"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          Background="White">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nama File" Width="2.5*" Binding="{Binding FileName}" />
+                        <DataGridTextColumn Header="Ukuran" Width="1.25*" Binding="{Binding SizeText}" />
+                        <DataGridTextColumn Header="Status" Width="1.35*" Binding="{Binding StatusText}" />
+                        <DataGridTextColumn Header="Kecepatan" Width="1*" Binding="{Binding SpeedText}" />
+                        <DataGridTextColumn Header="Sisa Waktu" Width="1*" Binding="{Binding EtaText}" />
+                        <DataGridTextColumn Header="Tanggal" Width="1.25*" Binding="{Binding DateText}" />
+                        <DataGridTextColumn Header="Folder" Width="1.6*" Binding="{Binding Folder}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
         </Grid>
 
         <TabControl Grid.Row="3" Margin="6,0,6,6">
