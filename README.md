@@ -4,7 +4,7 @@ Repository pemulihan untuk proyek **DOWNLOAD-AJA**, aplikasi download manager Wi
 
 ## Status
 
-**Recovery aktif — R1 sampai R7 terverifikasi; R8 dan R9 sudah diimplementasikan dan menunggu final Windows CI.**
+**Recovery aktif — R1 sampai R7 terverifikasi; R8–R10 serta R11A/R11B sudah diimplementasikan dan menunggu satu final Windows CI pada HEAD terbaru.**
 
 Source lama belum berhasil dipulihkan, jadi repo ini memakai provenance ketat:
 
@@ -36,8 +36,14 @@ Jangan menyebut source hasil rekonstruksi sebagai source asli.
 - `DownloadAja.NativeHost.exe`
 - HKCU native-host registration helper without Administrator for baseline
 - extension options page + native-host connection test
+- persisted daily queue scheduler, including overnight windows
+- live search/filter by filename, URL, folder, state, category, and error
+- `Pilihan` dialog for default folder, connections per download, simultaneous downloads, and global speed limit
+- global aria2 speed limiter with live RPC update when aria2 is running
+- persisted speed limit with backward-compatible schema-v1 settings loading
+- browser handoff reads the current persisted default download folder instead of a startup-only copy
 
-Latest fully verified checkpoint remains **Windows CI run #82 — PASS**. R8/R9 are implemented and waiting for the latest Windows runner to verify the combined code.
+Latest fully verified checkpoint remains **Windows CI run #82 — PASS**. Newer waves have passed build/unit/browser-validation checkpoints during intermediate CI runs, but a final HEAD run is still required before R8–R11B are marked VERIFIED.
 
 ## Browser integration
 
@@ -65,4 +71,4 @@ powershell -ExecutionPolicy Bypass -File tools/install-chrome-integration.ps1 -I
 
 ## Next gate
 
-Setelah final CI memverifikasi R8 + R9, tahap berikutnya adalah `R10 — Scheduler / Queue UX`.
+Selesaikan satu Windows CI penuh pada HEAD terbaru. Setelah R8–R11B terverifikasi, lanjutkan wave parity berikutnya seperti refresh URL kedaluwarsa / retry-integrity sebelum masuk portable acceptance R12.
