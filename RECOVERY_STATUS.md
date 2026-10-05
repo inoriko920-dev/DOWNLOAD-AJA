@@ -41,7 +41,7 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 ### R1 — Solution skeleton — DONE
 - solution `.NET 8`;
 - WPF desktop shell;
-- Core / Infrastructure / Persistence / BrowserBridge;
+- Core / Application / Infrastructure / Persistence / BrowserBridge;
 - Windows GitHub Actions CI;
 - shell UI berdasarkan referensi Library.
 
@@ -95,14 +95,29 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 - progress, speed, ETA, error hidup;
 - active download count + total speed hidup;
 - refresh engine periodik;
-- graceful shutdown ke owned aria2 process;
-- tombol fitur yang belum direkonstruksi sengaja disabled, bukan fake.
+- graceful shutdown ke owned aria2 process.
 
-**Windows CI run #65: PASS**, termasuk:
+### R7 — Add URL flow — DONE untuk baseline HTTP/HTTPS
+- tombol `Tambah URL` toolbar dan menu aktif;
+- dialog URL + nama file + folder tujuan;
+- Windows folder picker;
+- filename otomatis dari URL;
+- validasi hanya HTTP/HTTPS untuk baseline recovery;
+- default folder memakai persisted app settings;
+- max connections/split aria2 memakai persisted app settings;
+- duplicate URL ditolak;
+- duplicate destination path ditolak;
+- file target yang sudah ada di disk tidak ditimpa;
+- item masuk ke persisted queue/history;
+- opsi mulai antrean setelah ditambahkan;
+- item baru otomatis dipilih di UI;
+- application tests mencakup valid add, auto filename, invalid URL/scheme, duplicate URL/path, existing file, dan start behavior.
+
+**Windows CI run #82: PASS**, termasuk:
 - Restore: PASS
 - Build: PASS
 - seluruh solution tests: PASS
-- official aria2 1.37.0 fetch: PASS
+- official aria2 1.37.0 Windows x64 fetch: PASS
 - real aria2 HTTPS integration: PASS
 
 ## Status saat ini
@@ -114,7 +129,7 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 - [x] R4 real aria2 HTTP/HTTPS engine baseline.
 - [x] R5 queue execution core.
 - [x] R6 WPF shell live binding.
-- [ ] R7 Add URL flow.
+- [x] R7 Add URL flow.
 - [ ] R8 browser handoff core.
 - [ ] R9 Chrome MV3 extension.
 - [ ] R10 scheduler/queue UX.
@@ -125,6 +140,6 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 
 ## Next ready step
 
-**R7 — aktifkan `Tambah URL`: dialog URL + folder tujuan + filename resolution + validasi + duplicate handling + start-now/queue behavior ke queue nyata.**
+**R8 — browser handoff core:** single-instance desktop handoff, `--add-url`, local protocol, dan acknowledgement yang hanya sukses setelah URL benar-benar diterima/persisted oleh desktop app.
 
 Detail: `docs/recovery/03_RECONSTRUCTION_BACKLOG.md`.
