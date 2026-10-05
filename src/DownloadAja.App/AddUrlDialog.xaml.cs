@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using DownloadAja.Application.Downloads;
 using Microsoft.Win32;
