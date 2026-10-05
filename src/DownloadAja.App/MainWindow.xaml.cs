@@ -50,4 +50,35 @@ public partial class MainWindow : Window
                 MessageBoxImage.Error);
         }
     }
+
+    private async void SchedulerButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var current = await _viewModel.GetSchedulerStateAsync();
+            var dialog = new SchedulerDialog(current)
+            {
+                Owner = this
+            };
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            await _viewModel.ConfigureSchedulerAsync(
+                dialog.SchedulerEnabled,
+                dialog.StartTime,
+                dialog.StopTime);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                this,
+                $"Jadwal tidak dapat diperbarui.\n\n{ex.Message}",
+                "Jadwal Antrean",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
 }
