@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **R1–R7 COMPLETE / R8 READY**
+Status: **R1–R7 VERIFIED / R8–R9 IMPLEMENTED — FINAL CI PENDING / R10 NEXT**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -164,36 +164,60 @@ Verification: **Windows CI run #82 PASS**:
 
 ## R8 — Browser handoff core
 
-Status: READY
+Status: IMPLEMENTED — FINAL CI PENDING
 
-Target:
+Implemented as `RECONSTRUCTED`:
 
-- single-instance desktop handoff;
-- `--add-url` compatible entry path;
-- local protocol/RPC contract;
-- reuse R7 `AddDownloadService` validation and persistence path;
-- success only after URL is accepted/persisted by desktop app;
-- startup URL and running-instance URL tests;
-- no browser-specific logic inside WPF ViewModel.
+- [x] per-user single-instance desktop guard.
+- [x] secondary process forwards to primary and exits.
+- [x] `--add-url <URL>` and `--add-url=<URL>` startup forms.
+- [x] versioned local handoff protocol v1.
+- [x] per-user named-pipe IPC.
+- [x] pipe restricted with `CurrentUserOnly`.
+- [x] reuse R7 `AddDownloadService` validation/persistence path.
+- [x] success response only after desktop validation + queue persistence.
+- [x] activation command brings existing WPF window forward.
+- [x] startup URL and running-instance transport tests.
+- [x] regression test proving client cannot receive success before handler completes.
+- [x] single-instance regression test.
 
-Regression targets:
+Historical regressions addressed in design:
 
 - startup/browser URL handling;
 - async single-instance dispatch;
-- premature browser success.
+- premature browser success acknowledgement.
 
 ## R9 — Chrome MV3 extension
 
-Target:
+Status: IMPLEMENTED — FINAL CI PENDING
 
-- context menu download;
-- optional interception;
-- native/local bridge;
-- install/registration helper without admin where feasible;
-- protocol version check;
-- graceful fallback when desktop app is not running.
+Implemented as `RECONSTRUCTED`:
+
+- [x] Chrome Manifest V3 extension skeleton.
+- [x] deterministic unpacked extension ID.
+- [x] context menu for link/media/page URL.
+- [x] toolbar action for active tab URL.
+- [x] optional browser-download interception.
+- [x] interception OFF by default.
+- [x] browser download is only cancelled after native acknowledgement success.
+- [x] graceful fallback leaves Chrome download untouched when desktop/native host rejects or is unavailable.
+- [x] options page for interception + start-queue behavior.
+- [x] native-host connection test from extension options.
+- [x] native messaging protocol v1 with message-size guard.
+- [x] `DownloadAja.NativeHost.exe` console bridge.
+- [x] native host forwards to existing desktop instance.
+- [x] native host can launch sibling `Download Aja.exe` when desktop is not running, then retry handoff.
+- [x] per-user Chrome native-host registration via HKCU; no Administrator required for baseline.
+- [x] install + uninstall PowerShell helpers.
+- [x] allowed Chrome origin locked to deterministic extension ID.
+- [x] CI validation for MV3 JSON, JavaScript syntax, extension ID/origin agreement, and PowerShell syntax.
+- [x] .NET tests for native-message framing and oversized payload rejection.
+
+Current recovery distribution model: unpacked Chrome extension for local/portable use. Chrome Web Store packaging is not part of R9 baseline.
 
 ## R10 — Scheduler / queue UX
+
+Status: NEXT AFTER R8/R9 CI VERIFICATION
 
 Target:
 
@@ -227,6 +251,7 @@ Target:
 - full test suite green;
 - portable artifact;
 - bundled aria2 runtime;
+- bundled native host + browser integration assets;
 - dependency inventory;
 - SHA-256;
 - fresh-folder startup test;
