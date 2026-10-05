@@ -38,87 +38,50 @@ Riwayat percakapan lama mencatat C# / .NET 8 / WPF, aria2 portable, Chrome MV3 +
 
 Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 
-### R1 — Solution skeleton — DONE
-- solution `.NET 8`;
-- WPF desktop shell;
+### R1–R7 — VERIFIED
+
+Sudah terverifikasi melalui Windows CI sampai checkpoint #82:
+
+- .NET 8 + WPF shell;
 - Core / Application / Infrastructure / Persistence / BrowserBridge;
-- Windows GitHub Actions CI;
-- shell UI berdasarkan referensi Library.
+- versioned download domain + atomic persistence;
+- real aria2 HTTP/HTTPS engine baseline;
+- deterministic queue core;
+- live WPF binding;
+- Add URL flow dengan validation, duplicate protection, no silent overwrite, queue persistence, dan start behavior.
 
-### R2 — Download domain — DONE
-- DownloadItem identity + URL/destination;
-- state machine lengkap;
-- progress/speed/ETA/error/timestamp;
-- file category inference;
-- versioned snapshot schema v1;
-- restore path untuk persisted items;
-- transition-matrix tests.
+### R8 — Browser handoff core — IMPLEMENTED, FINAL CI PENDING
 
-### R3 — Persistence — DONE
-- atomic download-history JSON store;
-- persisted queue ordering/state;
-- app-settings store;
-- corrupt-primary recovery dari valid `.tmp`;
-- serialized writers untuk mencegah save race;
-- historical requested split/max setting divalidasi `1..20`.
+- per-user single-instance guard;
+- secondary instance meneruskan request lalu keluar;
+- `--add-url <URL>` dan `--add-url=<URL>`;
+- versioned local handoff protocol v1;
+- per-user Named Pipe IPC;
+- `PipeOptions.CurrentUserOnly`;
+- acknowledgement hanya setelah request diproses desktop;
+- URL browser tetap memakai R7 `AddDownloadService` sehingga validation + persistence tidak dibypass;
+- activate command untuk membawa window utama ke depan;
+- tests untuk startup parser, single instance, acknowledgement timing, persistence, dan protocol rejection.
 
-### R4 — aria2 engine adapter — DONE untuk baseline HTTP/HTTPS
-- aria2 JSON-RPC 2.0 client;
-- private localhost RPC + secret token;
-- process lifecycle/health gate;
-- addUri / pause / unpause / remove / tellStatus / shutdown;
-- DownloadItem ↔ aria2 GID mapping;
-- status/progress/speed/ETA/error mapping;
-- app split count sampai 20, dengan aria2 per-server connection clamp 16;
-- terminal GID cleanup;
-- missing-binary diagnostics;
-- unit tests untuk RPC payload, errors, status mapping, lifecycle, dan engine behavior.
+### R9 — Chrome MV3 integration — IMPLEMENTED, FINAL CI PENDING
 
-### R5 — Queue execution core — DONE
-- deterministic persisted queue order;
-- max simultaneous downloads;
-- queue start/stop scheduling;
-- pause/resume/stop/restart semantics;
-- stop-all regression guard;
-- completed items retained;
-- reorder persisted;
-- restart normalization.
-
-### R6 — WPF shell + live binding — DONE
-- explicit application composition root;
-- WPF ViewModel layer;
-- DataGrid bound ke real queue/domain state;
-- selection → Detail Unduhan;
-- tombol Mulai / Jeda / Hentikan hidup;
-- Stop All + Refresh hidup;
-- filter kategori hidup;
-- progress, speed, ETA, error hidup;
-- active download count + total speed hidup;
-- refresh engine periodik;
-- graceful shutdown ke owned aria2 process.
-
-### R7 — Add URL flow — DONE untuk baseline HTTP/HTTPS
-- tombol `Tambah URL` toolbar dan menu aktif;
-- dialog URL + nama file + folder tujuan;
-- Windows folder picker;
-- filename otomatis dari URL;
-- validasi hanya HTTP/HTTPS untuk baseline recovery;
-- default folder memakai persisted app settings;
-- max connections/split aria2 memakai persisted app settings;
-- duplicate URL ditolak;
-- duplicate destination path ditolak;
-- file target yang sudah ada di disk tidak ditimpa;
-- item masuk ke persisted queue/history;
-- opsi mulai antrean setelah ditambahkan;
-- item baru otomatis dipilih di UI;
-- application tests mencakup valid add, auto filename, invalid URL/scheme, duplicate URL/path, existing file, dan start behavior.
-
-**Windows CI run #82: PASS**, termasuk:
-- Restore: PASS
-- Build: PASS
-- seluruh solution tests: PASS
-- official aria2 1.37.0 Windows x64 fetch: PASS
-- real aria2 HTTPS integration: PASS
+- Manifest V3 extension;
+- deterministic unpacked extension ID `noobgcmaelhpcooeoflkjnkolkhcpmcl`;
+- context menu link/media/page;
+- toolbar action untuk active tab;
+- optional Chrome download interception;
+- interception OFF secara default;
+- Chrome baru membatalkan download setelah acknowledgement DOWNLOAD-AJA sukses;
+- graceful fallback: browser download tetap berjalan jika native host/desktop gagal atau menolak URL;
+- options page + connection test;
+- native messaging protocol v1;
+- 4-byte little-endian native messaging framing + max message guard;
+- `DownloadAja.NativeHost.exe`;
+- native host meneruskan ke primary desktop instance;
+- jika desktop belum aktif, native host dapat menjalankan sibling `Download Aja.exe` lalu retry handoff;
+- HKCU registration helper tanpa Administrator untuk baseline;
+- uninstall helper;
+- CI validation untuk manifest, JavaScript, deterministic extension ID/origin, PowerShell syntax, dan .NET native-message tests.
 
 ## Status saat ini
 
@@ -130,16 +93,16 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 - [x] R5 queue execution core.
 - [x] R6 WPF shell live binding.
 - [x] R7 Add URL flow.
-- [ ] R8 browser handoff core.
-- [ ] R9 Chrome MV3 extension.
+- [~] R8 browser handoff core — implemented, CI pending.
+- [~] R9 Chrome MV3 extension — implemented, CI pending.
 - [ ] R10 scheduler/queue UX.
 - [ ] Source ZIP lama ditemukan.
 - [ ] Portable DOWNLOAD-AJA lama ditemukan di Library.
 - [ ] Git history/bundle lama ditemukan.
 - [ ] Source ORIGINAL dipulihkan.
 
-## Next ready step
+## Next gate
 
-**R8 — browser handoff core:** single-instance desktop handoff, `--add-url`, local protocol, dan acknowledgement yang hanya sukses setelah URL benar-benar diterima/persisted oleh desktop app.
+R10 belum dikunci sebagai DONE sampai satu Windows CI terbaru memverifikasi gabungan R8 + R9. Setelah itu tahap berikutnya adalah **R10 — scheduler / queue UX**.
 
 Detail: `docs/recovery/03_RECONSTRUCTION_BACKLOG.md`.
