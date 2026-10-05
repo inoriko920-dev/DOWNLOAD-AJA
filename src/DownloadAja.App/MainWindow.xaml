@@ -12,35 +12,40 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="180" />
+            <RowDefinition Height="190" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0">
-            <MenuItem Header="Tugas" />
+            <MenuItem Header="Tugas">
+                <MenuItem Header="Mulai Antrean" Command="{Binding StartCommand}" />
+                <MenuItem Header="Hentikan Semua" Command="{Binding StopAllCommand}" />
+                <Separator />
+                <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
+            </MenuItem>
             <MenuItem Header="Unduh" />
             <MenuItem Header="Lihat" />
-            <MenuItem Header="Jadwal" />
+            <MenuItem Header="Jadwal" IsEnabled="False" ToolTip="Dikerjakan pada tahap scheduler." />
             <MenuItem Header="Kategori" />
-            <MenuItem Header="Pilihan" />
-            <MenuItem Header="Bantuan" />
+            <MenuItem Header="Pilihan" IsEnabled="False" ToolTip="Dialog opsi dikerjakan setelah baseline UI hidup." />
+            <MenuItem Header="Bantuan" IsEnabled="False" />
         </Menu>
 
         <Border Grid.Row="1" BorderBrush="#FFD1D1D1" BorderThickness="0,1,0,1" Background="#FFF8F8F8">
             <ToolBarTray Background="Transparent">
                 <ToolBar Band="0" BandIndex="0" Background="Transparent" Padding="8,4">
-                    <Button Width="82" Height="58" Margin="2" Content="Tambah URL" />
+                    <Button Width="82" Height="58" Margin="2" Content="Tambah URL" IsEnabled="False" ToolTip="Tahap R7 — Add URL flow." />
                     <Separator />
-                    <Button Width="70" Height="58" Margin="2" Content="Mulai" />
-                    <Button Width="70" Height="58" Margin="2" Content="Jeda" />
-                    <Button Width="70" Height="58" Margin="2" Content="Hentikan" />
-                    <Button Width="70" Height="58" Margin="2" Content="Hapus" />
+                    <Button Width="70" Height="58" Margin="2" Content="Mulai" Command="{Binding StartCommand}" />
+                    <Button Width="70" Height="58" Margin="2" Content="Jeda" Command="{Binding PauseCommand}" />
+                    <Button Width="70" Height="58" Margin="2" Content="Hentikan" Command="{Binding StopCommand}" />
+                    <Button Width="70" Height="58" Margin="2" Content="Hapus" IsEnabled="False" ToolTip="Penghapusan permanen belum diaktifkan pada baseline recovery." />
                     <Separator />
-                    <Button Width="78" Height="58" Margin="2" Content="Jadwal" />
-                    <Button Width="112" Height="58" Margin="2" Content="Ambil dari Browser" />
+                    <Button Width="78" Height="58" Margin="2" Content="Jadwal" IsEnabled="False" ToolTip="Tahap scheduler." />
+                    <Button Width="112" Height="58" Margin="2" Content="Ambil dari Browser" IsEnabled="False" ToolTip="Tahap browser bridge." />
                     <Separator />
-                    <Button Width="70" Height="58" Margin="2" Content="Opsi" />
-                    <Button Width="78" Height="58" Margin="2" Content="Bantuan" />
+                    <Button Width="70" Height="58" Margin="2" Content="Opsi" IsEnabled="False" />
+                    <Button Width="78" Height="58" Margin="2" Content="Refresh" Command="{Binding RefreshCommand}" />
                 </ToolBar>
             </ToolBarTray>
         </Border>
@@ -55,18 +60,11 @@
             <Border Grid.Column="0" Margin="6" BorderBrush="#FFC8C8C8" BorderThickness="1" Background="White">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Kategori" FontWeight="SemiBold" Padding="8,6" Background="#FFF2F2F2" />
-                    <ListBox BorderThickness="0" SelectedIndex="0">
-                        <ListBoxItem Content="Semua Unduhan" Padding="8,5" />
-                        <ListBoxItem Content="Selesai" Padding="8,5" />
-                        <ListBoxItem Content="Belum Selesai" Padding="8,5" />
-                        <ListBoxItem Content="Antrean" Padding="8,5" />
-                        <Separator Margin="4" />
-                        <ListBoxItem Content="Video" Padding="8,5" />
-                        <ListBoxItem Content="Audio" Padding="8,5" />
-                        <ListBoxItem Content="Dokumen" Padding="8,5" />
-                        <ListBoxItem Content="Arsip" Padding="8,5" />
-                        <ListBoxItem Content="Program" Padding="8,5" />
-                    </ListBox>
+                    <ListBox BorderThickness="0"
+                             ItemsSource="{Binding Categories}"
+                             DisplayMemberPath="Label"
+                             SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                             Padding="0,2" />
                 </DockPanel>
             </Border>
 
@@ -74,6 +72,8 @@
 
             <DataGrid Grid.Column="2"
                       Margin="0,6,6,6"
+                      ItemsSource="{Binding DownloadsView}"
+                      SelectedItem="{Binding SelectedDownload, Mode=TwoWay}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       CanUserAddRows="False"
@@ -83,12 +83,12 @@
                       Background="White">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nama File" Width="2.5*" Binding="{Binding FileName}" />
-                    <DataGridTextColumn Header="Ukuran" Width="0.8*" Binding="{Binding SizeText}" />
-                    <DataGridTextColumn Header="Status" Width="1.2*" Binding="{Binding StatusText}" />
+                    <DataGridTextColumn Header="Ukuran" Width="1.25*" Binding="{Binding SizeText}" />
+                    <DataGridTextColumn Header="Status" Width="1.35*" Binding="{Binding StatusText}" />
                     <DataGridTextColumn Header="Kecepatan" Width="1*" Binding="{Binding SpeedText}" />
                     <DataGridTextColumn Header="Sisa Waktu" Width="1*" Binding="{Binding EtaText}" />
                     <DataGridTextColumn Header="Tanggal" Width="1.25*" Binding="{Binding DateText}" />
-                    <DataGridTextColumn Header="Folder" Width="1.5*" Binding="{Binding Folder}" />
+                    <DataGridTextColumn Header="Folder" Width="1.6*" Binding="{Binding Folder}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -116,28 +116,37 @@
                     <TextBlock Grid.Row="4" Text="Sisa Waktu" Margin="0,2" />
                     <TextBlock Grid.Row="5" Text="Alamat" Margin="0,2" />
                     <TextBlock Grid.Row="6" Text="Folder" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="0" Text="-" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="-" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="2" Text="-" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="3" Text="-" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="4" Text="-" Margin="0,2" />
-                    <TextBlock Grid.Column="1" Grid.Row="5" Text="-" Margin="0,2" Foreground="#FF0066CC" />
-                    <TextBlock Grid.Column="1" Grid.Row="6" Text="-" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding SelectedDownload.FileName, TargetNullValue=-}" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding SelectedDownload.StatusText, TargetNullValue=-}" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding SelectedDownload.SizeText, TargetNullValue=-}" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding SelectedDownload.SpeedText, TargetNullValue=-}" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding SelectedDownload.EtaText, TargetNullValue=-}" Margin="0,2" />
+                    <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding SelectedDownload.SourceUrl, TargetNullValue=-}" Margin="0,2" Foreground="#FF0066CC" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding SelectedDownload.Folder, TargetNullValue=-}" Margin="0,2" TextTrimming="CharacterEllipsis" />
                 </Grid>
             </TabItem>
             <TabItem Header="Progress">
-                <TextBlock Margin="12" Text="Belum ada unduhan aktif." Foreground="Gray" />
+                <StackPanel Margin="12">
+                    <TextBlock Text="{Binding SelectedProgressText}" Margin="0,0,0,8" />
+                    <ProgressBar Height="22" Minimum="0" Maximum="100" Value="{Binding SelectedDownload.ProgressValue, TargetNullValue=0}" />
+                    <TextBlock Margin="0,8,0,0" Text="{Binding SelectedDownload.ErrorText, TargetNullValue=Tidak ada unduhan yang dipilih.}" Foreground="Gray" />
+                </StackPanel>
             </TabItem>
             <TabItem Header="Log">
-                <TextBlock Margin="12" Text="Log runtime akan ditampilkan di sini pada tahap integrasi engine." Foreground="Gray" />
+                <StackPanel Margin="12">
+                    <TextBlock Text="Status runtime" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,6,0,0" Text="{Binding StatusText}" TextWrapping="Wrap" />
+                </StackPanel>
             </TabItem>
         </TabControl>
 
         <StatusBar Grid.Row="4">
-            <StatusBarItem Content="Siap" />
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" />
+            </StatusBarItem>
             <Separator />
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock Text="Unduhan aktif: 0   |   Total kecepatan: 0 B/det" />
+                <TextBlock Text="{Binding SummaryText}" />
             </StatusBarItem>
         </StatusBar>
     </Grid>
