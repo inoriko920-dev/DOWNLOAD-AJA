@@ -1,6 +1,6 @@
 # 03 — Reconstruction Backlog
 
-Status: **R1–R5 COMPLETE / R6 READY**
+Status: **R1–R6 COMPLETE / R7 READY**
 
 Backlog ini bukan daftar fitur baru. Ini adalah urutan aman untuk mengembalikan kemampuan DOWNLOAD-AJA berdasarkan bukti yang tersedia.
 
@@ -103,35 +103,44 @@ Verification: **Windows CI run #52 PASS**, including all solution tests and real
 
 ## R6 — WPF shell parity + live binding
 
-Status: READY
+Status: DONE
 
-Existing visual foundation:
+Implemented as `RECONSTRUCTED`:
 
-- [x] menu bar.
-- [x] toolbar.
-- [x] category sidebar.
-- [x] seven-column download table.
-- [x] detail/progress/log tabs.
-- [x] status bar.
+- [x] explicit WPF application composition/bootstrap.
+- [x] WPF ViewModel layer.
+- [x] live queue collection binding.
+- [x] selection → Detail Unduhan binding.
+- [x] toolbar commands: Mulai, Jeda, Hentikan.
+- [x] Stop All + manual Refresh commands.
+- [x] category filters: Semua, Selesai, Belum Selesai, Antrean, Video, Audio, Dokumen, Arsip, Program.
+- [x] real progress/speed/ETA presentation from domain/aria2 state.
+- [x] active-count + total-speed status bar.
+- [x] periodic engine refresh without blocking the UI thread.
+- [x] graceful WPF shutdown → owned aria2 shutdown.
+- [x] future/unrecovered toolbar features remain visibly disabled instead of using fake behavior.
 
-Next target:
+Not activated yet:
 
-- [ ] application composition/bootstrap.
-- [ ] WPF ViewModel layer.
-- [ ] live queue collection binding.
-- [ ] selection → Detail Unduhan binding.
-- [ ] toolbar commands: Mulai, Jeda, Hentikan, Hapus where recovery contract supports it.
-- [ ] category filters.
-- [ ] real progress/speed/ETA presentation.
-- [ ] active-count / total-speed status bar.
-- [ ] periodic engine refresh without blocking UI.
-- [ ] graceful app shutdown and aria2 shutdown.
+- `Tambah URL` — belongs to R7.
+- permanent `Hapus` — destructive semantics are not yet recovered/locked.
+- `Jadwal` — R10.
+- `Ambil dari Browser` — R8/R9.
+- `Opsi` / other parity dialogs — later recovery waves.
 
-Gate:
+Verification: **Windows CI run #65 PASS**:
 
-UI acceptance must use queue/domain state, not static dummy rows.
+- Restore: PASS
+- Build: PASS
+- all solution tests: PASS
+- official aria2 1.37.0 fetch: PASS
+- real aria2 HTTPS integration: PASS
+
+UI acceptance uses real queue/domain state; no static dummy download rows are used.
 
 ## R7 — Add URL flow
+
+Status: READY
 
 Target:
 
