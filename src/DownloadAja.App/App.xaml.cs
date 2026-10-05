@@ -8,7 +8,7 @@ using DownloadAja.Persistence.Queue;
 
 namespace DownloadAja.App;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private Aria2ProcessManager? _aria2Runtime;
     private MainWindowViewModel? _mainViewModel;
