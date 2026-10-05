@@ -74,36 +74,35 @@ Semua bagian berikut berstatus **RECONSTRUCTED**, bukan ORIGINAL.
 - missing-binary diagnostics;
 - unit tests untuk RPC payload, errors, status mapping, lifecycle, dan engine behavior.
 
-**Windows CI run #44: PASS**, termasuk:
-- Restore: PASS
-- Build: PASS
-- unit/persistence/infrastructure tests: PASS
-- download official aria2 1.37.0 Windows x64: PASS
-- menjalankan `aria2c --version`: PASS
-- real HTTPS integration melalui reconstructed engine: PASS
-
-Real integration benar-benar memulai aria2 dan mengunduh file HTTPS dari repo resmi aria2 melalui `Aria2DownloadEngine`.
-
 ### R5 — Queue execution core — DONE
-- project `DownloadAja.Application`;
 - deterministic persisted queue order;
 - max simultaneous downloads;
 - queue start/stop scheduling;
-- pause frees a slot;
-- resume respects max active limit;
-- individual stop tidak auto-restart;
-- explicit restart/requeue;
-- stop-all turns scheduling off before stopping active downloads;
-- completion fills exactly the next waiting slot;
+- pause/resume/stop/restart semantics;
+- stop-all regression guard;
 - completed items retained;
-- reorder persisted and reused after coordinator restart;
-- transient Downloading/Paused state safely normalized to Waiting after app restart while preserving byte progress.
+- reorder persisted;
+- restart normalization.
 
-**Windows CI run #52: PASS**, termasuk:
+### R6 — WPF shell + live binding — DONE
+- explicit application composition root;
+- WPF ViewModel layer;
+- DataGrid bound ke real queue/domain state;
+- selection → Detail Unduhan;
+- tombol Mulai / Jeda / Hentikan hidup;
+- Stop All + Refresh hidup;
+- filter kategori hidup;
+- progress, speed, ETA, error hidup;
+- active download count + total speed hidup;
+- refresh engine periodik;
+- graceful shutdown ke owned aria2 process;
+- tombol fitur yang belum direkonstruksi sengaja disabled, bukan fake.
+
+**Windows CI run #65: PASS**, termasuk:
 - Restore: PASS
 - Build: PASS
-- seluruh solution tests termasuk queue tests: PASS
-- official aria2 fetch: PASS
+- seluruh solution tests: PASS
+- official aria2 1.37.0 fetch: PASS
 - real aria2 HTTPS integration: PASS
 
 ## Status saat ini
@@ -114,7 +113,7 @@ Real integration benar-benar memulai aria2 dan mengunduh file HTTPS dari repo re
 - [x] R3 persistence.
 - [x] R4 real aria2 HTTP/HTTPS engine baseline.
 - [x] R5 queue execution core.
-- [ ] R6 WPF shell dihubungkan ke state/commands nyata.
+- [x] R6 WPF shell live binding.
 - [ ] R7 Add URL flow.
 - [ ] R8 browser handoff core.
 - [ ] R9 Chrome MV3 extension.
@@ -126,8 +125,6 @@ Real integration benar-benar memulai aria2 dan mengunduh file HTTPS dari repo re
 
 ## Next ready step
 
-**R6 — hidupkan WPF shell dengan data queue nyata, selection/detail binding, toolbar commands, kategori, progress, dan status bar.**
-
-Setelah itu R7 membuat dialog `Tambah URL` dan menghubungkannya ke queue + aria2 nyata.
+**R7 — aktifkan `Tambah URL`: dialog URL + folder tujuan + filename resolution + validasi + duplicate handling + start-now/queue behavior ke queue nyata.**
 
 Detail: `docs/recovery/03_RECONSTRUCTION_BACKLOG.md`.
